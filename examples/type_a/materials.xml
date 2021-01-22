@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MATERIAL>
+    <material name="1" set="1" density="1.0000E+00" temperature="523.15K" label="Material 1">
+        <nuclide id="1102301" radio="1.0000E+00"/>
+    </material>
+
+    <material name="2" set="1" density="2.1618E-02" temperature="523.15K" label="Material 2">
+        <nuclide id="1402802" radio="2.1618E-02"/>
+    </material>
+
+    <material name="3" set="2" density="8.94276E-03" temperature="523.15K" label="Material 3">
+        <nuclide id="1102303" radio="8.7948E-03"/>
+        <nuclide id="1402803" radio="1.4796E-04"/>
+    </material>
+</MATERIAL>

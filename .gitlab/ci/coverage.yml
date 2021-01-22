@@ -1,0 +1,22 @@
+code-coverage:
+  extends: .run-base
+  stage: test
+  script:
+    - echo "Code coverage for package $PACKAGE_NAME"
+    - pytest --cov=$PACKAGE_NAME --cov-report term --cov-report xml:coverage.xml --cov-report html:coverage.html src/ tests/
+  coverage: /^TOTAL.+?(\d+\%)$/
+  artifacts:
+    reports:
+      cobertura: coverage.xml
+    paths:
+      - coverage.html/
+
+pages:
+  stage: deploy
+  needs: ["code-coverage"]
+  script:
+    - mv coverage.html/ public/
+  retry: 2
+  artifacts:
+    paths:
+      - public

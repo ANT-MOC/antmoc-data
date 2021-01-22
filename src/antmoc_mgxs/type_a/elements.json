@@ -1,0 +1,23 @@
+{
+    "BORON": [5],
+    "CARBON": [6],
+    "OXYGEN": [8],
+    "SODIUM": [11],
+    "SILICON": [14],
+    "TITANIUM": [22],
+    "VANADIUM": [23],
+    "CHROMIUM": [24],
+    "MANGANESE": [25],
+    "IRON": [26],
+    "MOLYBDENUM": [42],
+    "NICKEL": [28],
+    "URANIUM": [92],
+    "U": [92],
+    "URANIUM": [92],
+    "NEPTUNIUM": [93],
+    "PLUTONIUM": [94],
+    "Pu": [94],
+    "AMERICIUM": [95],
+    "CURIUM": [96]
+}
+

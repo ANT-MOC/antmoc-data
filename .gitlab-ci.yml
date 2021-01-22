@@ -1,0 +1,19 @@
+stages:
+  - analysis
+  - test
+  - deploy
+
+.run-base:
+  image: "python:3.6"
+  needs: []
+  interruptible: true
+  variables:
+    PACKAGE_NAME: "antmoc_mgxs"
+  before_script:
+    - python --version
+    - pip install -r requirements.txt
+
+include:
+  - local: .gitlab/ci/static-analysis.yml
+  - local: .gitlab/ci/test.yml
+  - local: .gitlab/ci/coverage.yml

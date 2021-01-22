@@ -1,0 +1,11 @@
+---
+version: "2"
+
+plugins:
+  sonar-python:
+    enabled: true
+  radon:
+    enabled: true
+
+exclude_patterns:
+  - "examples/"
