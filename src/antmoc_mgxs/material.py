@@ -137,6 +137,21 @@ class Material:
             return self['scatter matrix'][order, :]
         return self['scatter matrix']
 
+    def _check_xs_size(self):
+        """Check sizes of each array."""
+        for xsname, array in self.items():
+            if xsname.find("scatter") >= 0:
+                array = array.flatten()
+                squaregroups = self.ngroups * self.ngroups
+                if len(array) % (squaregroups) != 0:
+                    raise ValueError(
+                        f"Array '{xsname}' has length {len(array)} which is not "
+                        f"divisible by ngroups*ngroups ({squaregroups})")
+            elif len(array) != self.ngroups:
+                raise ValueError(
+                    f"Array '{xsname}' has length {len(array)} which not "
+                    f"equals ngroups ({self.ngroups})")
+
     def dump(self, parent, layout="named"):
         """Dump the material to an H5 group
 
@@ -150,6 +165,9 @@ class Material:
         layout : string
             material data layout, either 'named' or 'compressed'/'compact'.
         """
+        # Check array sizes
+        self._check_xs_size()
+
         layout_upper = layout.upper()
         if layout_upper in ["NAMED", "OPENMOC"]:
             self._dump_h5_named(parent)
@@ -200,6 +218,9 @@ class Material:
             raise ValueError(f"Undefined material data file layout: {layout}")
 
         self._load_h5_attributes(group)
+
+        # Check array sizes
+        self._check_xs_size()
 
     def _load_h5_named(self, group):
         """Load the material with layout 'named'."""

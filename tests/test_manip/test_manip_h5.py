@@ -62,3 +62,13 @@ class TestFixMaterials:
             )
 
         assert True
+
+
+class TestCheckMaterials:
+    def test_check_negative_xs(self, sample_h5_input):
+        """Check negative values in xs arrays."""
+        assert manip.check_negative_xs(sample_h5_input) is True
+
+    def test_check_sigma_t(self, sample_h5_input):
+        """Check 'total' and 'transport'."""
+        assert manip.check_sigma_t(sample_h5_input) is False

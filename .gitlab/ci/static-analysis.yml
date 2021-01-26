@@ -2,7 +2,7 @@ flake8:
   extends: .run-base
   stage: analysis
   script:
-    - flake8 --max-line-length=100 src/ tests/
+    - flake8 --max-line-length=100 src/ tests/ examples/
 
 lint:
   extends: .run-base

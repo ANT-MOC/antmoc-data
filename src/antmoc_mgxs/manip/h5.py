@@ -154,11 +154,16 @@ def check_sigma_t(file, layout="named", tolerance=1e-15):
     file : an H5 file object
     layout : material data layout type
     tolerance : tolerance for floating-point comparison
+
+    Return
+    ------
+    True if a sigma_t exists and is good, False otherwise
     """
     materials = iterate_materials(file, layout)
 
     xsnames = ["total", "transport"]
     missing_sigma_t = []
+    is_good = True
 
     for material in materials:
         ngroups = material.ngroups
@@ -182,6 +187,7 @@ def check_sigma_t(file, layout="named", tolerance=1e-15):
                     results[xs] = result
 
         if results:
+            is_good = False
             print(f"Total XS smaller than expected found in material {material.name}.\n"
                   "Results are formatted to (group, actual, expected).")
             for xs, array in results.items():
@@ -189,12 +195,21 @@ def check_sigma_t(file, layout="named", tolerance=1e-15):
             print()
 
     if missing_sigma_t:
+        is_good = False
         print(f"Materials missing a sigma_t:\n{missing_sigma_t}")
+
+    return is_good
 
 
 def check_negative_xs(file, layout="named"):
-    """Check negative values in xs data file."""
+    """Check negative values in xs data file.
+
+    Return
+    ------
+    True if there is no negative value, False otherwise.
+    """
     materials = iterate_materials(file, layout)
+    is_good = True
 
     for material in materials:
         ngroups = material.ngroups
@@ -216,12 +231,15 @@ def check_negative_xs(file, layout="named"):
                 results[xs] = result
 
         if results:
+            is_good = False
             print(f"Negative values found in material {material.name}.\n"
                   "Results for the scatter are formatted to (group, group, value).\n"
                   "Results for the rest are formatted to (group, value).")
             for xs, array in results.items():
                 print(f"In array '{xs}':\n{array}")
             print()
+
+    return is_good
 
 
 if __name__ == "__main__":

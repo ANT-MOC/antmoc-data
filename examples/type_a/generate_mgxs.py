@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import sys
-import numpy as np
 import xml.etree.ElementTree as ET
 from antmoc_mgxs.type_a.options import OptionsTypeA as Options
 from antmoc_mgxs.type_a import infilecross, generate
