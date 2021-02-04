@@ -5,6 +5,7 @@ Date:   October 4, 2020
 """
 
 import copy
+import warnings
 import numpy as np
 
 
@@ -53,6 +54,20 @@ class Material:
         "chi",
         "scatter matrix",
     ]
+
+    # An index map for compressed layout.
+    # These indices are to be written to the H5 file as top-level attributes.
+    # Attribute names must has a leading 'idx'. For example,
+    #   /material/idx absorption : 0
+    #   /material/idx fission : 1
+    #   /material/idx transport : 2
+    xsindices = {
+        "absorption": 0,
+        "fission": 1,
+        "transport": 2,
+        "nu-fission": 3,
+        "chi": 4,
+    }
 
     def __init__(self, name="unnamed", info="", ngroups=0, data=None):
         # Unique name
@@ -181,23 +196,43 @@ class Material:
     def _dump_h5_named(self, parent):
         """Dump the material with layout 'named'."""
         # Create a subgroup for the material
-        h5_group = parent.create_group(str(self.name))
+        h5group = parent.create_group(str(self.name))
 
         # Dump cross-sections to the file
         for xsname, array in self.items():
-            h5_group.create_dataset(xsname, data=array.flatten(), dtype=np.float64)
+            h5group.create_dataset(xsname, data=array.flatten(), dtype=np.float64)
 
     def _dump_h5_compact(self, parent):
         """Dump the material with layout 'compressed'/'compact'."""
-        pass
+        # Create a subgroup for the material
+        h5group = parent.create_group(str(self.name))
+
+        columns = int(max(Material.xsindices.values())) + 1
+
+        # Build the 'reactions' dataset and dump it into the file
+        reactions = np.zeros(shape=(self.ngroups, columns), dtype=np.float64)
+        for xsname, xsindex in Material.xsindices.items():
+            reactions[:, xsindex] = self[xsname]
+
+        h5group.create_dataset('reactions', data=reactions, dtype=np.float64)
+
+        # Reshape the scatter matrix and dump it into the file
+        scatter = np.reshape(self['scatter matrix'], (self.ngroups, self.ngroups))
+        h5group.create_dataset('scattering', data=scatter, dtype=np.float64)
 
     def _dump_h5_attributes(self, parent):
-        """Define additional H5 attributes for the material."""
-        h5_group = parent[str(self.name)]
+        """Define additional H5 attributes for the material.
+
+        Parameters
+        ----------
+        parent : H5 group object
+            the parent group of materials, which is often set to '/material'.
+        """
+        h5group = parent[str(self.name)]
 
         # Description
         if self.info:
-            h5_group.attrs["info"] = self.info
+            h5group.attrs["info"] = self.info
 
     def load(self, group, layout="named"):
         """Load the material from an H5 group
@@ -209,18 +244,22 @@ class Material:
         layout : string
             material data layout, either 'named' or 'compressed'/'compact'.
         """
-        layout_upper = layout.upper()
-        if layout_upper in ["NAMED", "OPENMOC"]:
+        # Read material name and extra attributes
+        self.name = group.name.split("/")[-1]
+        self._load_h5_attributes(group)
+
+        if layout.lower() in ["named", "openmoc"]:
             self._load_h5_named(group)
-        elif layout_upper in ["COMPRESSED", "COMPACT"]:
+        elif layout.lower() in ["compressed", "compact"]:
             self._load_h5_compact(group)
         else:
             raise ValueError(f"Undefined material data file layout: {layout}")
 
-        self._load_h5_attributes(group)
-
         # Check array sizes
         self._check_xs_size()
+
+        if not self.data:
+            warnings.warn(f"An empty material {self.name} was read")
 
     def _load_h5_named(self, group):
         """Load the material with layout 'named'."""
@@ -228,9 +267,31 @@ class Material:
             if xsname in group:
                 self[xsname] = np.array(group[xsname], dtype=np.float64)
 
-    def _load_h5_compact(self, parent):
+    def _load_h5_compact(self, group):
         """Load the material with layout 'compressed'/'compact'."""
-        pass
+        # Read dataset 'reactions'
+        dataset = group['reactions']
+
+        columns = int(max(Material.xsindices.values())) + 1
+
+        # Check dataset dimensions
+        if dataset.shape[0] != self.ngroups or dataset.shape[1] < columns:
+            raise ValueError(
+                f"Failed to read dataset '{dataset.name}' from a 'compact' H5 file:\n"
+                f"Bad dataset shape {dataset.shape}")
+
+        for xsname, xsindex in Material.xsindices.items():
+            self[xsname] = np.array(dataset[:, xsindex], dtype=np.float64)
+
+        # Read dataset 'scattering'
+        dataset = group['scattering']
+
+        if dataset.shape[0] != dataset.shape[1]:
+            raise ValueError(
+                f"Failed to read dataset '{dataset.name}' from a 'compact' H5 file:\n"
+                f"Bad dataset shape {dataset.shape}")
+
+        self["scatter matrix"] = np.array(dataset[...], dtype=np.float64).flatten()
 
     def _load_h5_attributes(self, group):
         """Read additional H5 attributes for the material."""

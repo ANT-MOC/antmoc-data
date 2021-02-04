@@ -25,6 +25,9 @@ def sample_h5_output():
 
     # Yield an H5 file object and do some clean after testing
     h5_output = h5py.File(str(path), 'w')
+    h5_output.close()
+
+    h5_output = h5py.File(str(path), 'r+')
     yield h5_output
     h5_output.close()
     path.unlink()

@@ -41,6 +41,20 @@ class TestDataIO:
 
         assert True
 
+    def test_convert_layout(self, sample_h5_input, sample_h5_output):
+        """Conversion between 'named' and 'compact' layouts."""
+        manip.convert_layout(
+            inputfile=sample_h5_input,
+            outputfile=sample_h5_output,
+            layout="named"
+            )
+
+        named_materials = manip.load_materials(sample_h5_input, layout="named")
+        compact_materials = manip.load_materials(sample_h5_output, layout="compact")
+
+        for name in named_materials:
+            assert named_materials[name] == compact_materials[name]
+
 
 class TestFixMaterials:
     def test_fix_scatter_matrix(self, sample_h5_input, sample_h5_output):

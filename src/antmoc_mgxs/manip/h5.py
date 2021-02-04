@@ -3,8 +3,11 @@
 Functions:
     load_ngroups(...)
     dump_ngroups(...)
+    load_xsindices(...)
+    dump_xsindices(...)
     load_materials(...)
     dump_materials(...)
+    convert_layout(...)
     fix_materials(...)
     check_sigma_t(...)
     check_negative_xs(...)
@@ -22,8 +25,8 @@ def iterate_materials(file, layout="named"):
     """Return a generator for iterating materials in a file."""
     ngroups = load_ngroups(file)
 
-    for name, group in file["material"].items():
-        material = Material(name=name, ngroups=ngroups)
+    for group in file["material"].values():
+        material = Material(ngroups=ngroups)
         material.load(group=group, layout=layout)
         yield material
 
@@ -46,6 +49,36 @@ def dump_ngroups(file, ngroups):
     file : H5 file object
     """
     file.attrs["# groups"] = np.int64(ngroups)
+
+
+def load_xsindices(file):
+    """Read the XS indices from an H5 file.
+
+    This is for compressed/compact layout.
+    Only cross-section names listed in Material.xslist will be searched among
+    the H5 group attributes.
+    """
+    materialgroup = file["material"]
+    xsindices = {}
+    for xsname in Material.xslist:
+        if f"idx {xsname}" in materialgroup.attrs:
+            xsindices[xsname] = materialgroup.attrs[f"idx {xsname}"]
+
+    return xsindices
+
+
+def dump_xsindices(file, xsindices):
+    """Store the XS indices to an H5 file.
+
+    This is for compressed/compact layout.
+    """
+    if "material" in file.keys():
+        materialgroup = file["material"]
+    else:
+        materialgroup = file.create_group("material")
+
+    for xsname, xsindex in xsindices.items():
+        materialgroup.attrs[f"idx {xsname}"] = np.int8(xsindex)
 
 
 def load_materials(file, layout="named"):
@@ -72,7 +105,7 @@ def load_materials(file, layout="named"):
     materials = {}
 
     for name in h5_top_group:
-        materials[name] = Material(name=name, ngroups=ngroups)
+        materials[name] = Material(ngroups=ngroups)
         materials[name].load(group=h5_top_group[name], layout=layout)
 
     return materials
@@ -110,6 +143,30 @@ def dump_materials(materials, file, layout="named"):
 
     for material in materials.values():
         material.dump(parent=h5_top_group, layout=layout)
+
+
+def convert_layout(inputfile, outputfile, layout="named"):
+    """Convert H5 layout from 'named' to 'compact' or vice versa."""
+    # Read and write the number of energy groups
+    ngroups = load_ngroups(inputfile)
+    dump_ngroups(outputfile, ngroups)
+
+    # Open the top-level group for output
+    outgroup = outputfile.create_group("material")
+
+    # Set the output layout, read or write extra attributes
+    if layout.lower() in ["named", "openmoc"]:
+        outlayout = "compact"
+        dump_xsindices(outputfile, Material.xsindices)
+    elif layout.lower() in ["compact", "compressed"]:
+        outlayout = "named"
+        Material.xsindices = load_xsindices(inputfile)
+    else:
+        raise ValueError(f"Undefined H5 file layout {layout}")
+
+    materials = iterate_materials(inputfile, layout)
+    for material in materials:
+        material.dump(parent=outgroup, layout=outlayout)
 
 
 def fix_materials(inputfile, outputfile, xs="sigma_s", layout="named"):

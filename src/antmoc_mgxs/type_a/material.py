@@ -70,11 +70,6 @@ class MaterialTypeA(MaterialXML):
                 if xsname == "chi":
                     # Skip Chi array since it is defined for all nuclides in a set.
                     continue
-
-                if xsname == "nu-fission":
-                    # Multiply the fission array by the nu aaray to get nu-fission.
-                    nu_fission = np.array(nuclide["nu"]) * np.array(nuclide["fission"])
-                    self[xsname] += nu_fission * weight
                 else:
                     self[xsname] += np.array(nuclide[xsname]) * weight
 

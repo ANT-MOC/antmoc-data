@@ -50,6 +50,9 @@ class Nuclide:
         self.data = {}
 
     def __getitem__(self, xsname):
+        if xsname not in self.data and xsname == "nu-fission":
+            # Compute nu-fission as needed
+            self.data[xsname] = np.array(self.data["nu"]) * np.array(self.data["fission"])
         return self.data[xsname]
 
     def __setitem__(self, xsname, array):
