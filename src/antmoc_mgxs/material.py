@@ -51,6 +51,7 @@ class Material:
         "total",
         "transport",
         "nu-fission",
+        "nu",
         "chi",
         "scatter matrix",
     ]
@@ -195,6 +196,13 @@ class Material:
 
     def _dump_h5_named(self, parent):
         """Dump the material with layout 'named'."""
+
+        # Set default cross-section values
+        required = ["chi", "nu-fission"]
+        for xsname in required:
+            if xsname not in self.keys():
+                self[xsname] = np.zeros(shape=(self.ngroups,), dtype=np.float64)
+
         # Create a subgroup for the material
         h5group = parent.create_group(str(self.name))
 
@@ -235,7 +243,7 @@ class Material:
             h5group.attrs["info"] = self.info
 
     def load(self, group, layout="named"):
-        """Load the material from an H5 group
+        """Load the material from an H5 group.
 
         Parameters
         ----------

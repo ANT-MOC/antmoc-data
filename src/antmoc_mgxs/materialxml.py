@@ -5,6 +5,7 @@ Date:   November 17, 2020
 """
 
 import math
+import numpy as np
 import re
 from .material import Material
 
@@ -15,7 +16,7 @@ class MaterialXML(Material):
     To generate a Material object, we need an XML node to provide density weights
     and a NuclideSet object to provide cross-section arrays.
     """
-    def __init__(self, node=None, nocheck=False):
+    def __init__(self, node=None, nocheck=True):
         """Instantiate a material.
 
         Parameters
@@ -58,6 +59,19 @@ class MaterialXML(Material):
             nuclideid = subnode.get("id")
             nuclideweight = subnode.get("radio")
             self.weights[nuclideid] = nuclideweight
+
+        # Macroscopic cross-sections (optional)
+        macronode = node.find("macroscopic")
+        if macronode:
+            self.data = {}
+            for xsnode in macronode:
+                x = np.fromstring(xsnode.text, dtype=np.float64, sep=' ')
+                if xsnode.tag in Material.xslist:
+                    self[xsnode.tag] = x
+                if xsnode.tag == "scattering":
+                    self["scatter matrix"] = x
+            if all(xsname in self.data for xsname in ["nu", "fission"]):
+                self["nu-fission"] = self["nu"] * self["fission"]
 
         # Check and fix attributes
         if not nocheck:

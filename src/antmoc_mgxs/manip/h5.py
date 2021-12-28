@@ -141,6 +141,7 @@ def dump_materials(materials, file, layout="named"):
     else:
         h5_top_group = file.create_group("material")
 
+    dump_ngroups(file, ngroups)
     for material in materials.values():
         material.dump(parent=h5_top_group, layout=layout)
 

@@ -52,9 +52,16 @@ def find_materials(xmltree):
     # All material definitions read from the XML tree.
     materials = {}
 
+    # Check if the number of groups is specified
+    if "groups" in root.attrib:
+        ngroups = int(root.get("groups"))
+    else:
+        ngroups = 0
+
     # Loop over elements
     for node_mat in root.findall("material"):
         material = MaterialXML(node=node_mat)
+        material.ngroups = ngroups
         materials[material.name] = material
 
     return materials
