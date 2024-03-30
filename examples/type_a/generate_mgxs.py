@@ -2,8 +2,8 @@
 
 import sys
 import xml.etree.ElementTree as ET
-from antmoc_mgxs.type_a.options import OptionsTypeA as Options
-from antmoc_mgxs.type_a import infilecross, generate
+from antmocmgxs.type_a import Options
+from antmocmgxs.type_a import infilecross, generate_mgxs_h5
 
 
 options = Options()
@@ -50,7 +50,7 @@ with open(options("sets"), "r") as file:
         )
 
 # Generate an H5 file for materials
-generate.generate_mgxs_h5(
+generate_mgxs_h5(
     file=options("output"),
     xmltree=xmltree,
     nuclidesets=allsets,

@@ -3,8 +3,8 @@
 import sys
 import json
 import xml.etree.ElementTree as ET
-import antmoc_mgxs.manip.xml as manip
-from antmoc_mgxs.options import Options
+import antmocmgxs.manip.xml as manip
+from antmocmgxs.options import Options
 
 
 options = Options()

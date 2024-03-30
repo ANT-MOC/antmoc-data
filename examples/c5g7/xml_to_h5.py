@@ -5,8 +5,8 @@ Generate a .h5 XS file from the materials.xml
 import sys
 import xml.etree.ElementTree as ET
 import h5py
-from antmoc_mgxs.options import Options
-from antmoc_mgxs.manip import h5, xml
+from antmocmgxs.options import Options
+from antmocmgxs.manip import h5, xml
 
 
 options = Options()

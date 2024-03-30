@@ -3,7 +3,7 @@
 import pytest
 import numpy as np
 import xml.etree.ElementTree as ET
-from antmoc_mgxs.material import Material
+from antmocmgxs import Material
 
 
 @pytest.fixture(scope="function")
