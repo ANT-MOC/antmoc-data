@@ -1,31 +1,7 @@
-ANT-MOC MGXS
+ANT-MOC Data
 ===========
 
-Packages for multi-group cross-section manipulation.
-
-These packages provide tools for checking, manipulating, and generating MGXS files for ANT-MOC.
-
-## Table of Contents
-
-- [ANT-MOC MGXS](#ant-moc-mgxs)
-  - [Table of Contents](#table-of-contents)
-  - [Prerequisites](#prerequisites)
-  - [Install](#install)
-  - [Examples](#examples)
-  - [HDF5 Data Layout](#hdf5-data-layout)
-    - [Layout: named](#layout-named)
-    - [Layout: compact/compressed](#layout-compactcompressed)
-  - [Common Modules](#common-modules)
-  - [Type A](#type-a)
-    - [Modules](#modules)
-    - [File Formats](#file-formats)
-      - [`materials.xml`](#materialsxml)
-      - [`infilecross`](#infilecross)
-  - [Type B](#type-b)
-    - [Modules](#modules-1)
-    - [File Formats](#file-formats-1)
-  - [License](#license)
-
+A package for ANT-MOC data manipulation.
 
 ## Prerequisites
 
@@ -37,10 +13,37 @@ These packages provide tools for checking, manipulating, and generating MGXS fil
 ## Install
 
 ```bash
-$ pip install antmocmgxs
+$ pip install antmocdata
 ```
 
-## Examples
+## License
+
+MIT
+
+## ANT-MOC MGXS
+
+Tools for checking, manipulating, and generating MGXS files for ANT-MOC.
+
+- [ANT-MOC Data](#ant-moc-data)
+  - [Prerequisites](#prerequisites)
+  - [Install](#install)
+  - [License](#license)
+  - [ANT-MOC MGXS](#ant-moc-mgxs)
+    - [Examples](#examples)
+    - [HDF5 Data Layout](#hdf5-data-layout)
+      - [Layout: named](#layout-named)
+      - [Layout: compact/compressed](#layout-compactcompressed)
+    - [Common Modules](#common-modules)
+    - [Type A](#type-a)
+      - [Modules](#modules)
+      - [File Formats](#file-formats)
+        - [`materials.xml`](#materialsxml)
+        - [`infilecross`](#infilecross)
+    - [Type B](#type-b)
+      - [Modules](#modules-1)
+      - [File Formats](#file-formats-1)
+
+### Examples
 
 Check the directory `examples/` for illustrations on how to use `antmocmgxs`.
 
@@ -51,13 +54,13 @@ Each of the sample scripts accepts command line arguments.
 ./examples/xml/fix_materials_in_xml.py --help
 ```
 
-## HDF5 Data Layout
+### HDF5 Data Layout
 
 There are two layouts of material data in an H5 file. Materials are treated as data groups in both of the layouts.
 
 In addition to materials, the H5 file must contain a top-level attribute named '# groups' for the number of energy groups.
 
-### Layout: named
+#### Layout: named
 
 This is the default cross-section data layout for ANT-MOC.
 
@@ -103,25 +106,25 @@ For example, a scatter matrix with 2 energy groups has 4 elements, which are sto
 
 > The number before symbol `->` is the source group, and the number after the symbol is the destination group.
 
-### Layout: compact/compressed
+#### Layout: compact/compressed
 
 TODO
 
-## Common Modules
+### Common Modules
 
 - `material`: class `Material` representing cross-sections. A material object could be written to an HDF5 file as a dataset.
 - `materialxml`: representation for the XML material definition, which is used to handle `materials.xml`.
 - `manip`: data manipulation utilities.
 - `options`: representation of command line options.
 
-## Type A
+### Type A
 
 Package `antmocmgxs.type_a` defines a generator which accepts two files to create an mgxs input for antmoc:
 
 - `infilecross`: cross-sections in plain text.
 - `materials.xml`: material definitions in XML, including nuclear densities.
 
-### Modules
+#### Modules
 
 - `material`: definition of `MaterialTypeA`, which is a sub-class of `Material`.
 - `nuclides`: representations of nuclides and nuclide sets, which are basically defined in a plain text file called "infilecross".
@@ -129,9 +132,9 @@ Package `antmocmgxs.type_a` defines a generator which accepts two files to creat
 - `generate`: functions for mgxs generation.
 - `options`: definition of `OptionsTypeA`, which is a sub-class of `Options`.
 
-### File Formats
+#### File Formats
 
-#### `materials.xml`
+##### `materials.xml`
 
 This is an XML file consisting of material definitions.
 
@@ -153,7 +156,7 @@ This is an XML file consisting of material definitions.
 - `nuclide.id`: nuclide ID containing its atomic number and mass (int).
 - `nuclide.radio`: density used by MGXS calculations (float).
 
-#### `infilecross`
+##### `infilecross`
 
 This is a plain text file consisting of nuclide set definitions.
 
@@ -170,14 +173,10 @@ $SOMESTRING 1  7SETs SET2
   ...
 ```
 
-## Type B
+### Type B
 
 TODO
 
-### Modules
+#### Modules
 
-### File Formats
-
-## License
-
-MIT
+#### File Formats

@@ -5,7 +5,7 @@ Date:   January 22, 2021
 """
 
 import pytest
-from antmocmgxs.type_a import infilecross
+from antmocdata.mgxs.type_a import infilecross
 
 
 class TestParseNuclideName:

@@ -7,8 +7,8 @@ Date:   January 23, 2021
 import pytest
 import warnings
 import xml.etree.ElementTree as ET
-import antmocmgxs.manip.xml as manip
-from antmocmgxs import MaterialXML as Material
+import antmocdata.mgxs.manip.xml as manip
+from antmocdata.mgxs import MaterialXML as Material
 
 
 class TestReadMaterials:

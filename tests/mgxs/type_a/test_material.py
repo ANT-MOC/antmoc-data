@@ -4,7 +4,7 @@ Author: An Wang, USTB (wangan.cs@gmail.com)
 Date:   January 23, 2021
 """
 
-from antmocmgxs.type_a import Material
+from antmocdata.mgxs.type_a import Material
 
 
 class TestMaterialTypeA:

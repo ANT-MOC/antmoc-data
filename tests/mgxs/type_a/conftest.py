@@ -1,7 +1,7 @@
 """Fixtures"""
 
 import pytest
-from antmocmgxs.type_a import infilecross
+from antmocdata.mgxs.type_a import infilecross
 
 
 @pytest.fixture

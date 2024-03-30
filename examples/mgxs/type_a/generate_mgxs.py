@@ -2,8 +2,8 @@
 
 import sys
 import xml.etree.ElementTree as ET
-from antmocmgxs.type_a import Options
-from antmocmgxs.type_a import infilecross, generate_mgxs_h5
+from antmocdata.mgxs.type_a import Options
+from antmocdata.mgxs.type_a import infilecross, generate_mgxs_h5
 
 
 options = Options()

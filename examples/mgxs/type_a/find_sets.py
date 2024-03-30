@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import sys
-from antmocmgxs.type_a import Options
-from antmocmgxs.type_a import infilecross
+from antmocdata.mgxs.type_a import Options
+from antmocdata.mgxs.type_a import infilecross
 
 
 options = Options()

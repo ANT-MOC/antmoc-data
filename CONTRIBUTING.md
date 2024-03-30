@@ -4,7 +4,7 @@ Thanks for taking the time to contribute!
 
 ## Workflow
 
-1. Install `antmocmgxs` with pip in the editable mode.
+1. Install `antmocdata` with pip in the editable mode.
 
     ```bash
     $ pip install -r requirements.txt

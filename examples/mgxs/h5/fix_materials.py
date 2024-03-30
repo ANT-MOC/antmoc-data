@@ -5,8 +5,8 @@ Try to make cross-section arrays consistent
 import os
 import sys
 import h5py
-from antmocmgxs.options import Options
-import antmocmgxs.manip.h5 as manip
+from antmocdata.mgxs.options import Options
+import antmocdata.mgxs.manip.h5 as manip
 
 
 options = Options()

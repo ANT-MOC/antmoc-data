@@ -1,4 +1,4 @@
-"""Package antmoc_mgxs."""
+"""Package antmocdata.mgxs."""
 
 from .material import Material
 from .materialxml import MaterialXML
