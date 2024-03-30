@@ -36,13 +36,9 @@ These packages provide tools for checking, manipulating, and generating MGXS fil
 
 ## Install
 
-Download the source to your disk, change to the source directory, and simply run pip to install the package.
-
 ```bash
-$ pip install .
+$ pip install antmocmgxs
 ```
-
-After installation, a package named `antmocmgxs` will be available, which has several sub-packages.
 
 ## Examples
 
