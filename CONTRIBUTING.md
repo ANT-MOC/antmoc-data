@@ -1,10 +1,10 @@
-# Contributing to antmoc-mgxs
+# Contributing to this project
 
 Thanks for taking the time to contribute!
 
 ## Workflow
 
-1. Install `antmoc-mgxs` with pip in the editable mode.
+1. Install `antmocmgxs` with pip in the editable mode.
 
     ```bash
     $ pip install -r requirements.txt

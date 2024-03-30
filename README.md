@@ -1,4 +1,4 @@
-antmoc-mgxs
+ANT-MOC MGXS
 ===========
 
 Packages for multi-group cross-section manipulation.
@@ -7,7 +7,7 @@ These packages provide tools for checking, manipulating, and generating MGXS fil
 
 ## Table of Contents
 
-- [antmoc-mgxs](#antmoc-mgxs)
+- [ANT-MOC MGXS](#ant-moc-mgxs)
   - [Table of Contents](#table-of-contents)
   - [Prerequisites](#prerequisites)
   - [Install](#install)
@@ -42,11 +42,11 @@ Download the source to your disk, change to the source directory, and simply run
 $ pip install .
 ```
 
-After installation, a package named `antmoc-mgxs` will be available, which has several sub-packages.
+After installation, a package named `antmocmgxs` will be available, which has several sub-packages.
 
 ## Examples
 
-Check the directory `examples/` for illustrations on how to use `antmoc-mgxs`.
+Check the directory `examples/` for illustrations on how to use `antmocmgxs`.
 
 Each of the sample scripts accepts command line arguments.
 
@@ -120,7 +120,7 @@ TODO
 
 ## Type A
 
-Package `antmoc-mgxs.type_a` defines a generator which accepts two files to create an mgxs input for antmoc:
+Package `antmocmgxs.type_a` defines a generator which accepts two files to create an mgxs input for antmoc:
 
 - `infilecross`: cross-sections in plain text.
 - `materials.xml`: material definitions in XML, including nuclear densities.

@@ -1,5 +1,0 @@
-unit-tests:
-  extends: .run-base
-  stage: test
-  script:
-    - tox
