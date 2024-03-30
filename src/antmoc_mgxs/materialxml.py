@@ -16,7 +16,7 @@ class MaterialXML(Material):
     To generate a Material object, we need an XML node to provide density weights
     and a NuclideSet object to provide cross-section arrays.
     """
-    def __init__(self, node=None, nocheck=True):
+    def __init__(self, node=None, nocheck=False):
         """Instantiate a material.
 
         Parameters

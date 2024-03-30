@@ -7,25 +7,30 @@ These packages provide tools for checking, manipulating, and generating MGXS fil
 
 ## Table of Contents
 
-- [Prerequisites](#prerequisites)
-- [Install](#install)
-- [Examples](#examples)
-- [HDF5 Data Layout](#hdf5-data-layout)
-  - [Layout: named](#layout-named)
-  - [Layout: compact/compressed](#layout-compactcompressed)
-- [Common Modules](#common-modules)
-- [Type A](#type-a)
+- [antmoc-mgxs](#antmoc-mgxs)
+  - [Table of Contents](#table-of-contents)
+  - [Prerequisites](#prerequisites)
+  - [Install](#install)
+  - [Examples](#examples)
+  - [HDF5 Data Layout](#hdf5-data-layout)
+    - [Layout: named](#layout-named)
+    - [Layout: compact/compressed](#layout-compactcompressed)
+  - [Common Modules](#common-modules)
+  - [Type A](#type-a)
     - [Modules](#modules)
     - [File Formats](#file-formats)
-- [Type B](#type-b)
+      - [`materials.xml`](#materialsxml)
+      - [`infilecross`](#infilecross)
+  - [Type B](#type-b)
     - [Modules](#modules-1)
     - [File Formats](#file-formats-1)
-- [License](#license)
+  - [License](#license)
 
 
 ## Prerequisites
 
 - Python >= 3.6
+- baseopt
 - numpy
 - h5py
 

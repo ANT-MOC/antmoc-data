@@ -5,7 +5,7 @@ Date:   November 16, 2020
 
 """
 
-from .baseoptions import BaseOptions
+from baseopt import BaseOption, BaseOptions
 
 
 class Options(BaseOptions):

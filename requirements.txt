@@ -1,3 +1,4 @@
+baseopt
 h5py
 numpy
 flake8
