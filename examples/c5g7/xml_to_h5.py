@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-
+"""
+Generate a .h5 XS file from the materials.xml
+"""
 import sys
-import h5py
 import xml.etree.ElementTree as ET
+import h5py
 from antmoc_mgxs.options import Options
 from antmoc_mgxs.manip import h5, xml
 
@@ -19,7 +21,7 @@ options.parse(sys.argv[1:])
 # Check if we should print a help message
 if options["help"]:
     options.help()
-    exit(1)
+    sys.exit(1)
 
 xmltree = ET.parse(options["input"])
 

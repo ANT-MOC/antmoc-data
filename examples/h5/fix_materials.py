@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-
+"""
+Try to make cross-section arrays consistent
+"""
 import os
 import sys
 import h5py
@@ -22,7 +24,7 @@ options.parse(sys.argv[1:])
 # Check if we should print a help message
 if options["help"]:
     options.help()
-    exit(1)
+    sys.exit(1)
 
 inputpath = os.path.abspath(options["input"])
 outputpath = os.path.abspath(options["output"])

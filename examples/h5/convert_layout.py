@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-
+"""
+Conversion between `Named` and `Compact` layouts
+"""
 import sys
 import h5py
 from antmoc_mgxs.options import Options
@@ -18,7 +20,7 @@ options.parse(sys.argv[1:])
 # Check if we should print a help message
 if options["help"]:
     options.help()
-    exit(1)
+    sys.exit(1)
 
 inputlayout = options["layout"].lower()
 if inputlayout == "named":

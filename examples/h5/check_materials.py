@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
-
+"""
+Check the total XS, find negative XS records
+"""
 import sys
 import h5py
 from antmoc_mgxs.options import Options
@@ -20,7 +22,7 @@ options.parse(sys.argv[1:])
 # Check if we should print a help message
 if options["help"]:
     options.help()
-    exit(1)
+    sys.exit(1)
 
 with h5py.File(options["input"], 'r') as inputfile:
     manip.check_sigma_t(inputfile, layout=options["layout"])
