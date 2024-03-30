@@ -2,28 +2,28 @@
 
 import sys
 import xml.etree.ElementTree as ET
-from antmoc_mgxs.type_a.options import OptionsTypeA as Options
-from antmoc_mgxs.type_a import infilecross, generate
+from antmocmgxs.type_a import Options
+from antmocmgxs.type_a import infilecross, generate_mgxs_h5
 
 
 options = Options()
 
 # Additional options
-options.add(name="fix-scatter", isbool=True, doc="Fix scatter matrices")
+options.add(name="fix-scatter", dtype=bool, doc="Fix scatter matrices")
 
 # Reset defaults
-options.opts("output").default = "./mgxs.h5"
+options["output"].default = "./mgxs.h5"
 
 # Parse command line arguments
 options.parse(sys.argv[1:])
 
 # Check if we should print a help message
-if options["help"]:
+if options("help"):
     options.help()
     exit(1)
 
 # Read densities
-xmltree = ET.parse(options["materials"])
+xmltree = ET.parse(options("materials"))
 
 # Set up marks for nuclide set data sections.
 # This could be commented out to use the default marks.
@@ -42,7 +42,7 @@ nuclidemarks = {
 }
 
 # Read nuclide sets
-with open(options["sets"], "r") as file:
+with open(options("sets"), "r") as file:
     allsets = infilecross.find_nuclidesets(
         strings=file.readlines(),
         setmarks=setmarks,
@@ -50,11 +50,11 @@ with open(options["sets"], "r") as file:
         )
 
 # Generate an H5 file for materials
-generate.generate_mgxs_h5(
-    file=options["output"],
+generate_mgxs_h5(
+    file=options("output"),
     xmltree=xmltree,
     nuclidesets=allsets,
-    fixscatter=options["fix-scatter"]
+    fixscatter=options("fix-scatter")
     )
 
-print("Successfully generated file {}".format(options["output"]))
+print("Successfully generated file {}".format(options("output")))

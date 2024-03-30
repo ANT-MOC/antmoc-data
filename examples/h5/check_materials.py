@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
-
+"""
+Check the total XS, find negative XS records
+"""
 import sys
 import h5py
-from antmoc_mgxs.options import Options
-import antmoc_mgxs.manip.h5 as manip
+from antmocmgxs.options import Options
+import antmocmgxs.manip.h5 as manip
 
 
 options = Options()
 
 # Reset default values
-options.opts("input").default = "./mgxs.h5"
+options["input"].default = "./mgxs.h5"
 
 # Remove unnecessary options
 options.remove("output")
@@ -18,10 +20,10 @@ options.remove("output")
 options.parse(sys.argv[1:])
 
 # Check if we should print a help message
-if options["help"]:
+if options("help"):
     options.help()
-    exit(1)
+    sys.exit(1)
 
-with h5py.File(options["input"], 'r') as inputfile:
-    manip.check_sigma_t(inputfile, layout=options["layout"])
-    manip.check_negative_xs(inputfile, layout=options["layout"])
+with h5py.File(options("input"), 'r') as inputfile:
+    manip.check_sigma_t(inputfile, layout=options("layout"))
+    manip.check_negative_xs(inputfile, layout=options("layout"))

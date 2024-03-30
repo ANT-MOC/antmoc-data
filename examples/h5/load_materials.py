@@ -1,27 +1,29 @@
 #!/usr/bin/env python3
-
+"""
+Load and print material files
+"""
 import sys
 import h5py
-from antmoc_mgxs.options import Options
-import antmoc_mgxs.manip.h5 as manip
+from antmocmgxs.options import Options
+import antmocmgxs.manip.h5 as manip
 
 
 options = Options()
 
 # Reset default values
-options.opts("input").default = "./mgxs.h5"
+options["input"].default = "./mgxs.h5"
 
 # Parse command line arguments
 options.parse(sys.argv[1:])
 
 # Check if we should print a help message
-if options["help"]:
+if options("help"):
     options.help()
-    exit(1)
+    sys.exit(1)
 
-with h5py.File(options["input"], 'r') as file:
+with h5py.File(options("input"), 'r') as file:
     materials = manip.load_materials(
-        file=file, layout=options["layout"])
+        file=file, layout=options("layout"))
 
 # Print materials
 for material in materials.values():

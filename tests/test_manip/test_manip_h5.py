@@ -5,7 +5,7 @@ Date:   January 24, 2021
 """
 
 import pytest
-import antmoc_mgxs.manip.h5 as manip
+import antmocmgxs.manip.h5 as manip
 
 
 class TestDataIO:
