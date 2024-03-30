@@ -3,6 +3,25 @@ ANT-MOC Data
 
 A package for ANT-MOC data manipulation.
 
+- [ANT-MOC Data](#ant-moc-data)
+  - [Prerequisites](#prerequisites)
+  - [Install](#install)
+  - [License](#license)
+  - [ANT-MOC MGXS](#ant-moc-mgxs)
+    - [Examples](#examples)
+    - [HDF5 Data Layout](#hdf5-data-layout)
+      - [Layout: named](#layout-named)
+      - [Layout: compact/compressed](#layout-compactcompressed)
+    - [Common Modules](#common-modules)
+    - [Type A](#type-a)
+      - [Modules](#modules)
+      - [File Formats](#file-formats)
+        - [`materials.xml`](#materialsxml)
+        - [`infilecross`](#infilecross)
+    - [Type B](#type-b)
+      - [Modules](#modules-1)
+      - [File Formats](#file-formats-1)
+
 ## Prerequisites
 
 - Python >= 3.6
@@ -24,34 +43,15 @@ MIT
 
 Tools for checking, manipulating, and generating MGXS files for ANT-MOC.
 
-- [ANT-MOC Data](#ant-moc-data)
-  - [Prerequisites](#prerequisites)
-  - [Install](#install)
-  - [License](#license)
-  - [ANT-MOC MGXS](#ant-moc-mgxs)
-    - [Examples](#examples)
-    - [HDF5 Data Layout](#hdf5-data-layout)
-      - [Layout: named](#layout-named)
-      - [Layout: compact/compressed](#layout-compactcompressed)
-    - [Common Modules](#common-modules)
-    - [Type A](#type-a)
-      - [Modules](#modules)
-      - [File Formats](#file-formats)
-        - [`materials.xml`](#materialsxml)
-        - [`infilecross`](#infilecross)
-    - [Type B](#type-b)
-      - [Modules](#modules-1)
-      - [File Formats](#file-formats-1)
-
 ### Examples
 
-Check the directory `examples/` for illustrations on how to use `antmocmgxs`.
+Check the directory `examples/mgxs` for examples on how to use `antmocmgxs`.
 
 Each of the sample scripts accepts command line arguments.
 
 ```bash
-./examples/h5/fix_materials.py --help
-./examples/xml/fix_materials_in_xml.py --help
+./examples/mgxs/h5/fix_materials.py --help
+./examples/mgxs/xml/fix_materials_in_xml.py --help
 ```
 
 ### HDF5 Data Layout
