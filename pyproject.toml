@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "antmocmgxs"
+version = "0.1.0"
+authors = [
+    {name = "An Wang", email = "wangan.cs@gmail.com"},
+]
+license = {file = "LICENSE" }
+description = "Multi-group cross-section manipulation package for ANT-MOC."
+readme = {file = "README.md", content-type = "text/markdown"}
+dependencies = [
+    "baseopt",
+    "numpy",
+    "h5py",
+]
+requires-python = ">= 3.8"
+
+[project.urls]
+Homepage = "https://github.com/alephpiece/antmoc-mgxs"
+Repository = "https://github.com/alephpiece/antmoc-mgxs"

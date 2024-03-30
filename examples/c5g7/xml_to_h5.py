@@ -12,20 +12,20 @@ from antmoc_mgxs.manip import h5, xml
 options = Options()
 
 # Reset defaults
-options.opts("input").default = "./materials.xml"
-options.opts("output").default = "./mgxs.h5"
+options["input"].default = "./materials.xml"
+options["output"].default = "./mgxs.h5"
 
 # Parse command line arguments
 options.parse(sys.argv[1:])
 
 # Check if we should print a help message
-if options["help"]:
+if options("help"):
     options.help()
     sys.exit(1)
 
-xmltree = ET.parse(options["input"])
+xmltree = ET.parse(options("input"))
 
 materials = xml.find_materials(xmltree)
 
-with h5py.File(options["output"], 'w') as outputfile:
+with h5py.File(options("output"), 'w') as outputfile:
     h5.dump_materials(materials, outputfile, layout="named")

@@ -11,7 +11,7 @@ import antmoc_mgxs.manip.h5 as manip
 options = Options()
 
 # Reset default values
-options.opts("input").default = "./mgxs.h5"
+options["input"].default = "./mgxs.h5"
 
 # Remove unnecessary options
 options.remove("output")
@@ -20,10 +20,10 @@ options.remove("output")
 options.parse(sys.argv[1:])
 
 # Check if we should print a help message
-if options["help"]:
+if options("help"):
     options.help()
     sys.exit(1)
 
-with h5py.File(options["input"], 'r') as inputfile:
-    manip.check_sigma_t(inputfile, layout=options["layout"])
-    manip.check_negative_xs(inputfile, layout=options["layout"])
+with h5py.File(options("input"), 'r') as inputfile:
+    manip.check_sigma_t(inputfile, layout=options("layout"))
+    manip.check_negative_xs(inputfile, layout=options("layout"))

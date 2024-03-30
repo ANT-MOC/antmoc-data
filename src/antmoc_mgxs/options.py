@@ -47,7 +47,7 @@ class Options(BaseOptions):
         super().__init__()
 
         # Append available options
-        self.add(name="help", shortname="h", isbool=True, doc="Show this message")
+        self.add(name="help", shortname="h", dtype=bool, doc="Show this message")
         self.add(name="input", shortname="i", default="./a.inp", valspec="FILE",
                  doc="input filename")
         self.add(name="output", shortname="o", default="./a.out", valspec="FILE",

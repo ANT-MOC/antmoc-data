@@ -5,4 +5,4 @@ Date:   January 22, 2021
 
 """
 
-__all__ = ["material", "materialxml", "baseoptions", "options"]
+__all__ = ["material", "materialxml", "options"]
