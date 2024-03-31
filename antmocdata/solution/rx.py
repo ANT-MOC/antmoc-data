@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""@package convert
-
+"""
 Tools for converting files of reaction rates and fluxes to other formats.
 
 Author: An Wang, USTB (wangan.cs@gmail.com)
@@ -113,3 +112,6 @@ def load_vtu(file, filters = []):
     print(f'Skipped data array(s): {skipped_arrays}')
     print('Done.')
     return arrays
+
+def normalize(data):
+    return data / np.sum(data) * np.count_nonzero(data)
