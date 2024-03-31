@@ -63,13 +63,12 @@ fiss = rx["Avg Fission RX"]
 print(fiss.shape)
 ```
 
-For ANT-MOC v0.1.15, the coordinate axes in a `.vtu` file are in the following order.
-
-<img src="https://github.com/ANT-MOC/antmoc-data/assets/22237751/88ccea16-da29-4be2-bd58-197e5291d92f" width="150">
+For ANT-MOC v0.1.15, a reaction rate dataset in a `.vtu` file is a 1D array.
+If the dimensions of reaction rate distributions are `(Nx, Ny, Nz)`, a data point `(x,y,z)` is indexed by `x+y*Nx+z*Nx*Ny` in the dataset.
 
 Loading the file with `load_vtu` will revert the y-axis. Back to the previous example, loaded data can be accessed by `fiss[z, y, x]`.
 
-<img src="https://github.com/ANT-MOC/antmoc-data/assets/22237751/996b318b-fce5-4880-a287-e1e6409e2882" width="200">
+<img src="https://github.com/ANT-MOC/antmoc-data/assets/22237751/74fe69d2-c758-4f53-81ca-939a37305417" height="400">
 
 ## Subpackage: ANT-MOC Log
 
