@@ -34,5 +34,4 @@ t_start = timeit.default_timer()
 logdb.save(options("savedb"))
 
 t_stop = timeit.default_timer()
-print("Time = {:.3f} s".format(t_stop - t_start))
-
+print(f"Time = {(t_stop - t_start):.3f} s")

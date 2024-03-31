@@ -48,25 +48,32 @@ class TinyExtractor(object):
 
     """
 
-    def __init__(self, logdb, specs = None, sortby = "", delimiter = " | ", output = "antmoc-records.csv", truncate = False, summary = False):
-        self.logdb      = logdb
-        self.specs      = specs
-        self.sortby     = sortby
-        self.delimiter  = delimiter
-        self.output     = output
-        self.truncate   = truncate
-        self.summary    = summary
-
+    def __init__(
+        self,
+        logdb,
+        specs=None,
+        sortby="",
+        delimiter=" | ",
+        output="antmoc-records.csv",
+        truncate=False,
+        summary=False,
+    ):
+        self.logdb = logdb
+        self.specs = specs
+        self.sortby = sortby
+        self.delimiter = delimiter
+        self.output = output
+        self.truncate = truncate
+        self.summary = summary
 
     def setup(self, options):
         """Initialize extractor attributes with an options object."""
-        self.specs      = options["specs"].value
-        self.sortby     = options["sortby"].value
-        self.delimiter  = options["delimiter"].value
-        self.output     = options["output"].value
-        self.truncate   = options["truncate"].value
-        self.summary    = options["summary"].value
-
+        self.specs = options["specs"].value
+        self.sortby = options["sortby"].value
+        self.delimiter = options["delimiter"].value
+        self.output = options["output"].value
+        self.truncate = options["truncate"].value
+        self.summary = options["summary"].value
 
     def extract(self):
         """Extract records from the LogDB object and print a report.
@@ -83,7 +90,7 @@ class TinyExtractor(object):
         print("Output file:\n\t{}\n".format(self.output))
 
         # Extract records in parallel
-        record_list = self.logdb.query(specs = self.specs, sortby = self.sortby)
+        record_list = self.logdb.query(specs=self.specs, sortby=self.sortby)
 
         # Expand field patterns for output
         specs = antmocdata.log.fields.expand_specs(self.specs)
@@ -91,7 +98,7 @@ class TinyExtractor(object):
         mode = "w" if self.truncate else "a"
 
         # Output
-        with open(self.output, mode = mode, newline = "") as csvfile:
+        with open(self.output, mode=mode, newline="") as csvfile:
 
             # Create a writer
             csvwriter = csv.writer(csvfile)
@@ -110,9 +117,9 @@ class TinyExtractor(object):
                 # Format the record lines
                 fmt_line = []
                 for i in range(len(record[1])):
-                    v     = record[1][i]
+                    v = record[1][i]
                     dtype = logfields[specs[i].name].dtype
-                    fmt   = logfields[specs[i].name].fmt
+                    fmt = logfields[specs[i].name].fmt
                     fmt_line.append(fmt.format(dtype(v)) if v is not None else "")
 
                 # Print records to stdout & file
@@ -146,6 +153,8 @@ class TinyExtractor(object):
         print("{:=^{}}".format("END", 80))
         print("")
 
+
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()

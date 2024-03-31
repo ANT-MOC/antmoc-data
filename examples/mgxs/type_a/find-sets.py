@@ -19,7 +19,7 @@ with open(options("sets"), mode="r") as file:
     all_sets = infilecross.find_nuclidesets(file.readlines())
 
 for nuclideset in all_sets.values():
-    print("{}\n".format(nuclideset))
+    print(f"{nuclideset}\n")
     print("nuclides in this set:")
     for nuclide in nuclideset.values():
-        print("{}".format(nuclide))
+        print(nuclide)

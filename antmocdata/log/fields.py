@@ -24,6 +24,7 @@ import json
 import re
 import antmocdata.log.fields
 
+
 class Field(object):
     """A log field.
 
@@ -62,13 +63,13 @@ class Field(object):
 
     """
 
-    def __init__(self, name, dtype = str, fmt = "{}", patterns = [], doc = ""):
+    def __init__(self, name, dtype=str, fmt="{}", patterns=[], doc=""):
 
-        self.name     = name
-        self.dtype    = dtype
-        self.fmt      = fmt
+        self.name = name
+        self.dtype = dtype
+        self.fmt = fmt
         self.patterns = patterns
-        self.doc      = doc
+        self.doc = doc
 
         if not isinstance(dtype, type):
             raise TypeError(f"dtype '{dtype}' is not a type object")
@@ -81,16 +82,16 @@ class Field(object):
 
     def serialized(self):
         data = {
-            "name":     self.name,
-            "dtype":    self.dtype.__name__,
-            "fmt":      self.fmt,
+            "name": self.name,
+            "dtype": self.dtype.__name__,
+            "fmt": self.fmt,
             "patterns": self.patterns,
-            "doc":      self.doc
+            "doc": self.doc,
         }
         return data
 
     def __str__(self):
-        return json.dumps(self, cls = FieldEncoder, indent = 2)
+        return json.dumps(self, cls=FieldEncoder, indent=2)
 
 
 class LogFields(object):
@@ -127,6 +128,7 @@ class LogFields(object):
 
             # Read default fields
             import inspect, os
+
             path = os.path.dirname(inspect.getfile(antmocdata.log.fields))
             path = os.path.join(path, "default_fields.json")
 
@@ -136,7 +138,6 @@ class LogFields(object):
 
         return cls.instance
 
-
     def __getitem__(self, field_name):
         """Return a Field object by name."""
         return self.data[field_name]
@@ -145,20 +146,26 @@ class LogFields(object):
         """Set a Field object by name."""
         if isinstance(field, Field):
             if name != field.name:
-                raise KeyError(f"Field name '{field.name}' doesn't match the key '{name}'")
+                raise KeyError(
+                    f"Field name '{field.name}' doesn't match the key '{name}'"
+                )
             self.data[name] = field
         else:
-            raise TypeError(f"Object '{field}' is not a Field and cannot be added to LogFields")
+            raise TypeError(
+                f"Object '{field}' is not a Field and cannot be added to LogFields"
+            )
 
     def __str__(self):
-        return json.dumps(self, indent = 2, cls = FieldsEncoder)
-    
+        return json.dumps(self, indent=2, cls=FieldsEncoder)
+
     def add(self, field):
         """Add a Field object"""
         if isinstance(field, Field):
             self.data[field.name] = field
         else:
-            raise TypeError(f"Object '{field}' is not a Field and cannot be added to LogFields")
+            raise TypeError(
+                f"Object '{field}' is not a Field and cannot be added to LogFields"
+            )
 
     def items(self):
         """Return tuple list of fields."""
@@ -188,50 +195,55 @@ class LogFields(object):
         """Return field docstrings."""
         return [x.doc for x in self.values()]
 
+
 class FieldEncoder(json.JSONEncoder):
     """A json encoder for Field."""
+
     def default(self, field):
         return field.serialized()
 
+
 class FieldsEncoder(json.JSONEncoder):
     """A json encoder for LogFields."""
+
     def default(self, fields):
         return [x.serialized() for x in fields.values()]
 
+
 def decode_field(json_obj):
     """A hook for json.load to decode Field or Field list."""
-    types = {
-        "str": str,
-        "int": int,
-        "float": float
-    }
+    types = {"str": str, "int": int, "float": float}
 
     if "name" in json_obj:
-        return Field(name = json_obj["name"],
-                     dtype = types[json_obj["dtype"]],
-                     fmt = json_obj["fmt"],
-                     patterns = json_obj["patterns"],
-                     doc = json_obj["doc"])
+        return Field(
+            name=json_obj["name"],
+            dtype=types[json_obj["dtype"]],
+            fmt=json_obj["fmt"],
+            patterns=json_obj["patterns"],
+            doc=json_obj["doc"],
+        )
     return json_obj
 
-def dump(obj, path, mode = "x"):
+
+def dump(obj, path, mode="x"):
     """Save a field or fields to a json file."""
-    with open(path, mode = mode) as file:
+    with open(path, mode=mode) as file:
         if isinstance(obj, Field):
             encoder = FieldEncoder
         elif isinstance(obj, LogFields):
             encoder = FieldsEncoder
         else:
             raise NotImplementedError("Only Field or LogFields can be dumped")
-        json.dump(obj, fp = file, indent = 2, cls = encoder)
+        json.dump(obj, fp=file, indent=2, cls=encoder)
+
 
 def load(path):
     """Load a field or fields from a json file.
     LogFields is currently implemented by singleton, so we have to change its
     attributes after decoding the json file.
     """
-    with open(path, mode = "r") as file:
-        data = json.load(fp = file, object_hook = decode_field)
+    with open(path, mode="r") as file:
+        data = json.load(fp=file, object_hook=decode_field)
         if isinstance(data, Field):
             return data
 
@@ -244,6 +256,7 @@ def load(path):
             return logfields
         except:
             raise NotImplementedError("Only Field or LogFields can be loaded")
+
 
 def add(field):
     """Add a field to LogFields object
@@ -258,11 +271,11 @@ def help_fields():
 
     logfields = LogFields()
     wfield = max([len(x) for x in logfields.names()])
-    wtype  = max([len(x.__name__) for x in logfields.dtypes()])
-    msg    = []
+    wtype = max([len(x.__name__) for x in logfields.dtypes()])
+    msg = []
     for field in logfields.values():
-        type_str = "({})".format(field.dtype.__name__)
-        msg.append("{: <{}}{: <{}} : {}".format(field.name, wfield, type_str, wtype+2, field.doc))
+        type_str = f"({field.dtype.__name__})"
+        msg.append(f"{field.name: <{wfield}}{type_str: <{wtype+2}} : {field.doc}")
 
     print("\nAvailable fields:\n{}\n".format("\n".join(msg)))
 
@@ -374,12 +387,12 @@ class FieldSpec(object):
             raise ValueError(f"An op or value is missing in field spec '{spec}'")
 
         # Set attributes
-        self.name   = name
-        self.op     = op
-        self.value  = value
+        self.name = name
+        self.op = op
+        self.value = value
 
         # This attribute can only be set to a concrete Field spec
-        self.pred   = None
+        self.pred = None
 
     def __str__(self):
         return f"{self.name}{self.op}{self.value}"
@@ -412,8 +425,10 @@ class FieldSpec(object):
             re_matched = re_field.match(field_name)
             if re_matched:
                 # Create a predicate for the spec
-                spec      = FieldSpec(f"{re_matched.group()}{self.op}{self.value}")
-                spec.pred = FieldPredicate(name=re_matched.group(), op = self.op, value = self.value)
+                spec = FieldSpec(f"{re_matched.group()}{self.op}{self.value}")
+                spec.pred = FieldPredicate(
+                    name=re_matched.group(), op=self.op, value=self.value
+                )
                 specs.append(spec)
 
         if not specs:
@@ -481,13 +496,13 @@ class FieldPredicate(object):
 
     """
 
-    def __init__(self, name, op = "", value = ""):
+    def __init__(self, name, op="", value=""):
 
         # Set attributes
-        self.name   = name
-        self.dtype  = LogFields()[name].dtype
-        self.op     = op
-        self.value  = value
+        self.name = name
+        self.dtype = LogFields()[name].dtype
+        self.op = op
+        self.value = value
 
         if self.op == "==":
             self.re_value = re.compile(str(self.value), re.I)
@@ -496,8 +511,9 @@ class FieldPredicate(object):
             try:
                 self.value = self.dtype(self.value)
             except:
-                raise TypeError(f"Value '{self.value}' is not of the dtype '{self.dtype}' of field '{name}'")
-
+                raise TypeError(
+                    f"Value '{self.value}' is not of the dtype '{self.dtype}' of field '{name}'"
+                )
 
     def __call__(self, value):
 
@@ -519,7 +535,9 @@ class FieldPredicate(object):
         try:
             value = self.dtype(value)
         except:
-            raise TypeError(f"Value '{value}' is not of the dtype '{self.dtype}' of field '{self.name}'")
+            raise TypeError(
+                f"Value '{value}' is not of the dtype '{self.dtype}' of field '{self.name}'"
+            )
 
         match self.op:
             case "<":
@@ -531,7 +549,9 @@ class FieldPredicate(object):
             case ">=":
                 return value >= self.value
             case _:
-                raise ValueError(f"Unsupported operator '{self.op}' in field predicate '{self.name}{self.op}{self.value}'")
+                raise ValueError(
+                    f"Unsupported operator '{self.op}' in field predicate '{self.name}{self.op}{self.value}'"
+                )
 
     def __str__(self):
         return f"{self.op}{self.value}"
@@ -565,4 +585,5 @@ def expand_specs(field_specs):
 
 if __name__ == "__main__":
     import doctest
+
     doctest.testmod()

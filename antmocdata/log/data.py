@@ -67,7 +67,7 @@ class LogFile(object):
 
     """
 
-    def __init__(self, path = None, format = "txt"):
+    def __init__(self, path=None, format="txt"):
         """Parse a log file with a specified file format."""
 
         self.path = path
@@ -83,17 +83,17 @@ class LogFile(object):
         if name in self.data.keys():
             return self.data[name]
         else:
-            raise KeyError("Field '{}' was not found".format(name))
+            raise KeyError(f"Field '{name}' was not found")
 
     def __setitem__(self, name, value):
         """Modify existing field value."""
         if name in self.data.keys():
             self.data[name] = value
         else:
-            raise KeyError("Field '{}' was not found".format(name))
+            raise KeyError(f"Field '{name}' was not found")
 
     def __str__(self):
-        return json.dumps(self.data, indent = 2)
+        return json.dumps(self.data, indent=2)
 
     def hash(self):
         """Hash a logfile to get a unique id.
@@ -101,16 +101,16 @@ class LogFile(object):
         """
         return hashlib.md5(json.dumps(self.data, indent=2).encode("utf-8")).hexdigest()
 
-    def save(self, path, mode = "x"):
+    def save(self, path, mode="x"):
         """Save data to a new file."""
-        with open(path, mode = mode) as file:
-            json.dump(obj = self.data, fp = file, indent = 2)
+        with open(path, mode=mode) as file:
+            json.dump(obj=self.data, fp=file, indent=2)
 
     def save_in_place(self):
         """Save data to the original file.
         Be careful that this method will truncate the file.
         """
-        self.save(path = self.path, mode = "w")
+        self.save(path=self.path, mode="w")
 
     def items(self):
         return self.data.items()
@@ -213,10 +213,10 @@ class LogDB(object):
 
     """
 
-    def __init__(self, nprocs = 1, filenames = [], fileformat = "txt", cache = False):
+    def __init__(self, nprocs=1, filenames=[], fileformat="txt", cache=False):
 
-        self.nprocs     = nprocs
-        self.cache      = cache
+        self.nprocs = nprocs
+        self.cache = cache
         self.fileformat = fileformat
 
         # Patterns
@@ -245,17 +245,17 @@ class LogDB(object):
             format = self.fileformat
 
         if not self.cache:
-            return LogFile(path, format = format)
+            return LogFile(path, format=format)
         else:
-            return self.cache_file(path, format = format)
+            return self.cache_file(path, format=format)
 
     def setup(self, options):
         """Setup the DB with options.
         This method takes options "nprocs", "cache", and "filenames".
         """
         if isinstance(options, LogOptions):
-            self.nprocs     = int(options["nprocs"].value)
-            self.cache      = options["cache"].value
+            self.nprocs = int(options["nprocs"].value)
+            self.cache = options["cache"].value
             self.fileformat = options["fileformat"].value
             self.add_paths(options["filenames"].value, self.fileformat)
         else:
@@ -263,7 +263,7 @@ class LogDB(object):
 
     def reset(self):
         """Reset attributes."""
-        #FIXME: is the memory managed elegantly?
+        # FIXME: is the memory managed elegantly?
         self._filepatterns = []
         self._files = collections.OrderedDict()
         self._logfiles = multiprocessing.Manager().dict()
@@ -272,7 +272,7 @@ class LogDB(object):
         """Check if a file path exists."""
         return path.resolve() in self._files.keys()
 
-    def add_paths(self, patterns, format = None):
+    def add_paths(self, patterns, format=None):
         """Add file paths matching given patterns to the DB."""
         if isinstance(patterns, str):
             patterns = [patterns]
@@ -300,7 +300,9 @@ class LogDB(object):
         # Incrementally add new patterns and update the file list
         self._filepatterns.extend(new_patterns)
 
-        print("LogDB: added {} file pattern(s) and {} path(s)".format(len(new_patterns), len(self._files) - count))
+        print(
+            f"LogDB: added {len(new_patterns)} file pattern(s) and {len(self._files) - count} path(s)"
+        )
 
     def remove_paths(self, patterns):
         """Remove file paths matching given patterns."""
@@ -319,12 +321,12 @@ class LogDB(object):
         # Get a cached log file, or create it
         logfile = self[path]
 
-        filepath = directory / "{}.json".format(logfile.hash())
+        filepath = directory / f"{logfile.hash()}.json"
 
         if filepath.exists():
             return False
         else:
-            logfile.save(filepath.resolve(), mode = "x")
+            logfile.save(filepath.resolve(), mode="x")
             return True
 
     def save(self, directory):
@@ -347,15 +349,17 @@ class LogDB(object):
 
         # Generate arguments for starmap
         arg_paths = self._files.keys()
-        arg_dirs  = [path for x in self._files.values()]
+        arg_dirs = [path for x in self._files.values()]
 
-        with multiprocessing.Pool(processes = self.nprocs) as pool:
+        with multiprocessing.Pool(processes=self.nprocs) as pool:
             are_dumped = pool.starmap(self._dump_to_file, zip(arg_paths, arg_dirs))
 
-        n_dumped  = sum([1 for x in are_dumped if x])
+        n_dumped = sum([1 for x in are_dumped if x])
         n_skipped = len(are_dumped) - n_dumped
 
-        print(f"LogDB: skipped {n_skipped} file(s), saved {n_dumped} file(s) to '{path.resolve()}'")
+        print(
+            f"LogDB: skipped {n_skipped} file(s), saved {n_dumped} file(s) to '{path.resolve()}'"
+        )
 
     def cache_file(self, path, format):
         """Read a single log file immediatelly.
@@ -370,7 +374,7 @@ class LogDB(object):
         if path in self._logfiles.keys():
             return self._logfiles[path]
         else:
-            logfile = LogFile(path, format = format)
+            logfile = LogFile(path, format=format)
             self._logfiles[path] = logfile
             return logfile
 
@@ -381,14 +385,14 @@ class LogDB(object):
 
         # Generate arguments for starmap
         arg_paths = self._files.keys()
-        arg_fmts  = [x[1] for x in self._files.values()]
+        arg_fmts = [x[1] for x in self._files.values()]
 
-        with multiprocessing.Pool(processes = self.nprocs) as pool:
+        with multiprocessing.Pool(processes=self.nprocs) as pool:
             pool.starmap(self.cache_file, zip(arg_paths, arg_fmts))
 
         count += len(self._logfiles)
 
-        print("LogDB: {} file(s) newly cached, {} in total".format(count, len(self._logfiles)))
+        print(f"LogDB: {count} file(s) newly cached, {len(self._logfiles)} in total")
 
     def query_file(self, path, format, specs):
         """Query a single log file with field specs.
@@ -420,8 +424,7 @@ class LogDB(object):
         else:
             return (logfile, values, broken_fields)
 
-
-    def query(self, specs, sortby = ""):
+    def query(self, specs, sortby=""):
         """Query all log files with field specs.
 
         Parameters
@@ -438,31 +441,31 @@ class LogDB(object):
         """
 
         # Reporting
-        print("LogDB: querying with {} processes".format(self.nprocs))
-        print("LogDB: file name patterns =\n\t{}".format("\n\t".join(self._filepatterns)))
-        print("LogDB: field specs =\n\t{}".format(", ".join(specs)))
+        print(f"LogDB: querying with {self.nprocs} processes")
+        print(
+            "LogDB: file name patterns =\n\t{}".format("\n\t".join(self._filepatterns))
+        )
+        print(f"LogDB: field specs =\n\t{', '.join(specs)}")
 
         # Generate arguments for starmap
         arg_paths = self._files.keys()
-        arg_fmts  = [x[1] for x in self._files.values()]
+        arg_fmts = [x[1] for x in self._files.values()]
         arg_specs = [specs for x in range(len(self._files))]
 
-        with multiprocessing.Pool(processes = self.nprocs) as pool:
-            records = pool.starmap(
-                self.query_file, zip(arg_paths, arg_fmts, arg_specs)
-            )
+        with multiprocessing.Pool(processes=self.nprocs) as pool:
+            records = pool.starmap(self.query_file, zip(arg_paths, arg_fmts, arg_specs))
 
         # Remove None values
         records = [x for x in records if x]
 
-        print("LogDB: current cached files = {}".format(len(self._logfiles)))
+        print(f"LogDB: current cached files = {len(self._logfiles)}")
 
         # Sort by the specified key. Before that, a value must be converted to
         # the proper type, otherwise floating-point numbers will not be handled
         # properly.
         logfields = LogFields()
         if sortby:
-            records.sort( key = lambda record : logfields[sortby].dtype(record[0][sortby]) )
+            records.sort(key=lambda record: logfields[sortby].dtype(record[0][sortby]))
 
         return records
 
@@ -484,13 +487,15 @@ class LogFileSerializer(object):
 
     """
 
-    def __new__(cls, format = "txt"):
+    def __new__(cls, format="txt"):
         if format == "txt":
             return LogFileSerializerTXT()
         elif format == "json":
             return LogFileSerializerJSON()
         else:
-            raise ValueError("Unrecoganized file format of LogFileSerializer: {}".format(format))
+            raise ValueError(
+                f"Unrecoganized file format of LogFileSerializer: {format}"
+            )
 
 
 class LogFileSerializerTXT(object):
@@ -520,12 +525,14 @@ class LogFileSerializerTXT(object):
         stat = path.stat()
 
         # Initialize a dictionary for underlying data
-        data = collections.OrderedDict([
-            ("JobId", ""),
-            ("File",            str(path)),
-            ("FileTimeStamp",   str(datetime.datetime.fromtimestamp(stat.st_mtime))),
-            ("FileSize",        "{:.1f}".format(stat.st_size / 1000)), # KB
-        ])
+        data = collections.OrderedDict(
+            [
+                ("JobId", ""),
+                ("File", str(path)),
+                ("FileTimeStamp", str(datetime.datetime.fromtimestamp(stat.st_mtime))),
+                ("FileSize", f"{(stat.st_size / 1000):.1f}"),  # KB
+            ]
+        )
 
         # Extract jobid from the file name
         id_matched = re.match(r"^([0-9]+)-", path.name, re.I)
@@ -534,7 +541,7 @@ class LogFileSerializerTXT(object):
             data["JobId"] = id_matched.group(1)
 
         # Extract each field from the file
-        f = open(path, mode = "r")
+        f = open(path, mode="r")
         file_content = f.read()
         f.close()
 
@@ -576,7 +583,7 @@ class LogFileSerializerJSON(object):
         return cls.instance
 
     def load(self, path):
-        with open(path, mode = "r") as file:
+        with open(path, mode="r") as file:
             data = json.load(file)
 
         return data
