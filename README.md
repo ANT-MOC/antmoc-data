@@ -65,7 +65,11 @@ print(fiss.shape)
 
 For ANT-MOC v0.1.15, the coordinate axes in a `.vtu` file are in the following order.
 
+<img src="https://github.com/ANT-MOC/antmoc-data/assets/22237751/88ccea16-da29-4be2-bd58-197e5291d92f" width="150">
+
 Loading the file with `load_vtu` will revert the y-axis. Back to the previous example, loaded data can be accessed by `fiss[z, y, x]`.
+
+<img src="https://github.com/ANT-MOC/antmoc-data/assets/22237751/996b318b-fce5-4880-a287-e1e6409e2882" width="200">
 
 ## Subpackage: ANT-MOC Log
 
