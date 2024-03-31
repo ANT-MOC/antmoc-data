@@ -68,7 +68,7 @@ If the dimensions of reaction rate distributions are `(Nx, Ny, Nz)`, a data poin
 
 Loading the file with `load_vtu` will revert the y-axis. Back to the previous example, loaded data can be accessed by `fiss[z, y, x]`.
 
-<img src="https://github.com/ANT-MOC/antmoc-data/assets/22237751/74fe69d2-c758-4f53-81ca-939a37305417" height="400">
+<img src="https://github.com/ANT-MOC/antmoc-data/assets/22237751/74fe69d2-c758-4f53-81ca-939a37305417" height="300">
 
 ## Subpackage: ANT-MOC Log
 
