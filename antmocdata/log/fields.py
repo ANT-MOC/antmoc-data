@@ -110,6 +110,12 @@ class LogFields(object):
     >>> isinstance(logfields, LogFields)
     True
 
+    Add a field
+    >>> logfields["NewField"] = Field(name="NewField", patterns=["NewField.*"])
+
+    >>> print(logfields["NewField"].name)
+    NewField
+
     """
 
     # Singleton
@@ -138,12 +144,21 @@ class LogFields(object):
     def __setitem__(self, name, field):
         """Set a Field object by name."""
         if isinstance(field, Field):
+            if name != field.name:
+                raise KeyError(f"Field name '{field.name}' doesn't match the key '{name}'")
             self.data[name] = field
         else:
-            raise TypeError("Only Field objects can be stored in LogFields")
+            raise TypeError(f"Object '{field}' is not a Field and cannot be added to LogFields")
 
     def __str__(self):
         return json.dumps(self, indent = 2, cls = FieldsEncoder)
+    
+    def add(self, field):
+        """Add a Field object"""
+        if isinstance(field, Field):
+            self.data[field.name] = field
+        else:
+            raise TypeError(f"Object '{field}' is not a Field and cannot be added to LogFields")
 
     def items(self):
         """Return tuple list of fields."""
@@ -230,6 +245,13 @@ def load(path):
         except:
             raise NotImplementedError("Only Field or LogFields can be loaded")
 
+def add(field):
+    """Add a field to LogFields object
+
+    >>> add(Field(name="NewField", patterns=["NewField.*"]))
+    """
+    LogFields().add(field)
+
 
 def help_fields():
     """Help message for available fields."""
@@ -248,18 +270,19 @@ def help_fields():
 class FieldSpec(object):
     """Field name pattern and predicate.
 
-    Field spec is basically a field name and a predicate.
-    The field name is a perl regex without symbols "<", "=", and ">".
-    The predicate is an op and a value. The operator can be "<", "=", ">", or
-    just empty string. The value can be a perl regex, which will take effect
-    only when the operator is set to "=".
+    Field spec consists of a field name and a predicate.
+    The field name is a perl regex without symbols "=", "<", and ">".
+    The predicate is an op and value. The operator can be "==", "<",
+    "<=", ">", and ">=", or just an empty string. The value is a perl
+    regex. Wildcards in the value only work when the operator is set
+    to "==".
 
     For example, the following spec has a field name of "JobId", an op
-    of "=", and a value of "2020.*".
+    of "==", and a value of "2020.*".
         "JobId=2020.*"
 
-    When it is used to instantiate a FieldSpec, it will be unpacked to a tuple
-        ("JobId", "=", "2020.*")
+    When it is used to instantiate a FieldSpec, it will be unpacked to
+        ("JobId", "==", "2020.*")
 
     A minimal field spec contains only a field name.
 
@@ -273,14 +296,14 @@ class FieldSpec(object):
     name  : string
         Field name, perl regex is supported
     op    : string
-        Binary oprator in ["", "<", "=", ">"], "" represents always-true
+        Binary oprator in ["", "==", "<", "<=", ">", ">="], "" represents always-true
     value : string
         Value/regex for comparison (combined with op as a predicate for filtering)
 
     Examples
     --------
 
-    >>> spec = FieldSpec("JobId=2020")
+    >>> spec = FieldSpec("JobId==2020")
 
     >>> spec.name
     'JobId'
@@ -288,8 +311,8 @@ class FieldSpec(object):
     >>> FieldSpec("JobId").get()
     ('JobId', '', '')
 
-    >>> FieldSpec("JobId=2020.*").get()
-    ('JobId', '=', '2020.*')
+    >>> FieldSpec("JobId==2020.*").get()
+    ('JobId', '==', '2020.*')
 
     >>> FieldSpec("JobId<2020").get()
     ('JobId', '<', '2020')
@@ -297,41 +320,52 @@ class FieldSpec(object):
     >>> FieldSpec("JobId>2020").get()
     ('JobId', '>', '2020')
 
-    >>> FieldSpec("=2020").get()
+    >>> FieldSpec("JobId<=2020").get()
+    ('JobId', '<=', '2020')
+
+    >>> FieldSpec("JobId>=2020").get()
+    ('JobId', '>=', '2020')
+
+    >>> FieldSpec("JobId=2020").get()
     Traceback (most recent call last):
         ...
-    ValueError: Failed to unpack field spec '=2020'
+    ValueError: Failed to unpack field spec 'JobId=2020'
+
+    >>> FieldSpec("==2020").get()
+    Traceback (most recent call last):
+        ...
+    ValueError: Failed to unpack field spec '==2020'
 
     Be careful, this will be treated as a single regex
     >>> FieldSpec("JobId+2020").get()
     ('JobId+2020', '', '')
 
-    >>> FieldSpec("JobId=").get()
+    >>> FieldSpec("JobId==").get()
     Traceback (most recent call last):
         ...
-    ValueError: An op or value is missing in field spec 'JobId='
+    ValueError: An op or value is missing in field spec 'JobId=='
 
     Expand the spec by field name
-    >>> spec = FieldSpec("J[a-z]*Id=2020.*")
+    >>> spec = FieldSpec("J[a-z]*Id==2020.*")
 
     >>> spec.get()
-    ('J[a-z]*Id', '=', '2020.*')
+    ('J[a-z]*Id', '==', '2020.*')
 
     >>> specs = spec.expanded()
 
     >>> [str(x) for x in specs]
-    ['JobId=2020.*']
+    ['JobId==2020.*']
 
     """
 
     def __init__(self, spec):
         """Unpack a field spec string."""
 
-        re_matched = re.match("^([^<=>]+)([<=>]?)([^<=>]*)$", spec)
+        re_matched = re.match(r"^([^<=>]+)([<>]=?|==)?([^<=>]*)$", spec)
         if re_matched:
-            name  = re_matched.group(1) if re_matched.group(1) else ""
-            op    = re_matched.group(2) if re_matched.group(2) else ""
-            value = re_matched.group(3) if re_matched.group(3) else ""
+            name, op, value = re_matched.groups()
+            op = "" if op is None else op
+            value = "" if value is None else value
         else:
             raise ValueError(f"Failed to unpack field spec '{spec}'")
 
@@ -377,7 +411,7 @@ class FieldSpec(object):
         for field_name in LogFields().names():
             re_matched = re_field.match(field_name)
             if re_matched:
-                # Create a pred for the spec
+                # Create a predicate for the spec
                 spec      = FieldSpec(f"{re_matched.group()}{self.op}{self.value}")
                 spec.pred = FieldPredicate(name=re_matched.group(), op = self.op, value = self.value)
                 specs.append(spec)
@@ -391,7 +425,7 @@ class FieldSpec(object):
 class FieldPredicate(object):
     """Predicate for log file filtering.
 
-    If op is "=", values are treated as strings and the comparison is to be
+    If op is "==", values are treated as strings and the comparison is to be
     done by regex matching (just like "=~"). In other cases, values will be
     typed and the type should be the same as the field dtype.
 
@@ -403,8 +437,8 @@ class FieldPredicate(object):
     Examples
     --------
 
-    Binary operator
-    >>> pred = FieldPredicate("JobId", "=", "31623.*")
+    Binary operator "==" for strings
+    >>> pred = FieldPredicate("JobId", "==", "31623.*")
 
     >>> pred("1")
     False
@@ -415,13 +449,26 @@ class FieldPredicate(object):
     >>> pred("316231421")
     True
 
-    >>> pred = FieldPredicate("JobId", "<", "31623")
+    Binary operator "<" for strings or integers
+    # >>> pred = FieldPredicate("JobId", "<", "31623")
 
-    >>> pred("1")
+    # >>> pred("1")
+    # True
+
+    # >>> pred("99999")
+    # False
+
+    Binary operator ">=" for integers
+    >>> pred = FieldPredicate("Azims", ">=", "32")
+
+    >>> pred("8")
+    False
+
+    >>> pred("32")
     True
 
-    >>> pred("99999")
-    False
+    >>> pred("64")
+    True
 
     Always-true operator
     >>> pred = FieldPredicate("JobId")
@@ -437,18 +484,19 @@ class FieldPredicate(object):
     def __init__(self, name, op = "", value = ""):
 
         # Set attributes
+        self.name   = name
         self.dtype  = LogFields()[name].dtype
         self.op     = op
         self.value  = value
 
-        if self.op == "=":
+        if self.op == "==":
             self.re_value = re.compile(str(self.value), re.I)
 
-        if self.op in ["<", ">"]:
+        if self.op in ["<", "<=", ">", ">="]:
             try:
                 self.value = self.dtype(self.value)
             except:
-                raise AttributeError(f"Value '{self.value}' is not of the dtype of field '{name}'")
+                raise TypeError(f"Value '{self.value}' is not of the dtype '{self.dtype}' of field '{name}'")
 
 
     def __call__(self, value):
@@ -460,24 +508,30 @@ class FieldPredicate(object):
         if not value:
             # If the given value is None, return false.
             # FIXME: This behaviour will skip fields without values, which
-            # prevents us to match empty fields directly.
+            # prevents a spec to match empty fields directly.
             return False
 
-        if self.op == "=":
-            # Treat "=" as "=~"
+        if self.op == "==":
+            # Treat "==" as "=~"
             return self.re_value.match(str(value)) is not None
 
         # Check the value type and convert it to field dtype
         try:
             value = self.dtype(value)
         except:
-            raise AttributeError(f"Value '{value}' is not of the dtype")
+            raise TypeError(f"Value '{value}' is not of the dtype '{self.dtype}' of field '{self.name}'")
 
-        if self.op == "<":
-            return value < self.value
-        elif self.op == ">":
-            return value > self.value
-
+        match self.op:
+            case "<":
+                return value < self.value
+            case "<=":
+                return value <= self.value
+            case ">":
+                return value > self.value
+            case ">=":
+                return value >= self.value
+            case _:
+                raise ValueError(f"Unsupported operator '{self.op}' in field predicate '{self.name}{self.op}{self.value}'")
 
     def __str__(self):
         return f"{self.op}{self.value}"
@@ -491,12 +545,12 @@ def expand_specs(field_specs):
     Examples
     --------
 
-    >>> specs = ["J[a-z]*Id", "Job.*", "Job.*=2020.*"]
+    >>> specs = ["J[a-z]*Id", "Job.*", "Job.*==2020.*"]
 
     >>> specs = expand_specs(specs)
 
     >>> [str(x) for x in specs]
-    ['JobId', 'JobId', 'JobId=2020.*']
+    ['JobId', 'JobId', 'JobId==2020.*']
 
     """
 

@@ -100,7 +100,11 @@ options["specs"].value = ["Azims=64", "Polars>2"]
 extractor.extract()
 ```
 
-A `FieldSpec` consists of three parts: field name, binary operator, and value. Perl regex is supported for the field name and the operator. For example, `".*Time"` could match all the fields with an ending `Time` string. The binary operator could be `<`, `=`, or `>`, and simple numerical comparisons are supported.
+A `FieldSpec` consists of three parts: field name, binary operator, and value. Perl regex is supported for the field name and the operator. For example, `".*Time"` could match all the fields with an ending `Time` string.
+
+The binary operator could be `==`, `<`, `<=`, `>`, or `>=`. Operator `==` is for string comparison and perl regex is supported in this case. Inequality symbols are for string or numerical comparisons.
+
+> Be careful if you want to use inequality symbols on string fields. Values from these fields are compared through string comparison. Predefined field types are located in `antmocdata.log.default_fields.json`.
 
 ### Fields
 
@@ -109,6 +113,17 @@ Predefined log fields are located in `antmocdata.log.default_fields.json`. If th
 ```python
 from antmocdata.log import fields
 fields.load("path/to/your/fields.json")
+```
+
+There is also an `add` method for appending single field to the field dictionary.
+
+```python
+from antmocdata.log import Field
+fields.add(Field(name="NewField1", patterns=["NewField1.*"]))
+
+# or adding the field directly to LogFields
+from antmocdata.log import LogFields
+LogFields().add(Field(name="NewField2", patterns=["NewField2.*"]))
 ```
 
 ### Save log database
