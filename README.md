@@ -86,7 +86,7 @@ python ./examples/log/extract-records.py --help
 
 ### Log file
 
-A log file of ANT-MOC contains many data fields. If a group of log files are provided to a `LogDB` object, these files will be serialized and stored as `LogFile` objects.
+A log file of ANT-MOC contains many data fields. A group of log files are managed by the `LogDB` object. By default, the `LogDB` object only keeps log file paths. Each of the log files won't be read and serialized until it is queried.
 
 ```python
 from antmocdata.log import Options, LogDB
@@ -94,8 +94,16 @@ options = Options()
 # ...
 # setup options eigher through CLI or direct assignments
 # ...
+# Singleton
 logdb = LogDB()
 logdb.setup(options)
+```
+
+To avoid parsing the samke log files repeatedly, one can set the `LogDB` object to the caching mode or explicitly load all the log files.
+
+```python
+logdb.cache = True # caching mode
+logdb.cache_all() # load all the logs immediately
 ```
 
 ### Extractor

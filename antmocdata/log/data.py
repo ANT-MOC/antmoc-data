@@ -379,7 +379,7 @@ class LogDB(object):
             return logfile
 
     def cache_all(self):
-        """Read all log files immediatelly."""
+        """Read all log files immediately."""
         # Counting files
         count = -len(self._logfiles)
 
