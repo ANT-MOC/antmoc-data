@@ -1,3 +1,3 @@
 """Package antmocdata"""
 
-__all__ = ["mgxs"]
+__all__ = ["mgxs", "log", "solution"]

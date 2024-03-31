@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "antmocdata"
-version = "0.1.0"
+version = "0.1.2"
 authors = [
     {name = "An Wang", email = "wangan.cs@gmail.com"},
 ]
@@ -21,3 +21,6 @@ requires-python = ">= 3.8"
 [project.urls]
 Homepage = "https://github.com/alephpiece/antmoc-data"
 Repository = "https://github.com/alephpiece/antmoc-data"
+
+[tool.setuptools]
+packages = ["antmocdata"]

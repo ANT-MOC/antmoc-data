@@ -3,6 +3,6 @@ include MANIFEST.in
 include LICENSE
 include README.md
 
-graft src
+graft antmocdata
 graft tests
 graft examples
