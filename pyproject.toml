@@ -21,3 +21,6 @@ requires-python = ">= 3.8"
 [project.urls]
 Homepage = "https://github.com/alephpiece/antmoc-data"
 Repository = "https://github.com/alephpiece/antmoc-data"
+
+[tool.setuptools]
+packages = ["antmocdata"]
