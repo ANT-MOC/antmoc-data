@@ -7,13 +7,15 @@ A package for ANT-MOC data manipulation.
   - [Prerequisites](#prerequisites)
   - [Install](#install)
   - [License](#license)
-  - [ANT-MOC Log](#ant-moc-log)
+  - [Subpackage: ANT-MOC Solution](#subpackage-ant-moc-solution)
+    - [Load data to numpy arrays](#load-data-to-numpy-arrays)
+  - [Subpackage: ANT-MOC Log](#subpackage-ant-moc-log)
     - [Examples](#examples)
     - [Log file](#log-file)
     - [Extractor](#extractor)
     - [Fields](#fields)
     - [Save log database](#save-log-database)
-  - [ANT-MOC MGXS](#ant-moc-mgxs)
+  - [Subpackage: ANT-MOC MGXS](#subpackage-ant-moc-mgxs)
     - [Examples](#examples-1)
     - [HDF5 data layout](#hdf5-data-layout)
       - [Layout: named](#layout-named)
@@ -30,7 +32,7 @@ A package for ANT-MOC data manipulation.
 
 ## Prerequisites
 
-- Python >= 3.6
+- Python >= 3.8
 - baseopt
 - numpy
 - h5py
@@ -45,9 +47,29 @@ $ pip install antmocdata
 
 MIT
 
-## ANT-MOC Log
+## Subpackage: ANT-MOC Solution
 
-Package `antmocdata.log` contains tools for exploring ANT-MOC logs.
+Package `antmocdata.solution` provides tools for processing reaction rates and fluxes produced by ANT-MOC.
+
+### Load data to numpy arrays
+
+Function `antmocdata.solution.load_vtu` reads reaction rates and fluxes from a `.vtu` file and stores them in a dictionary of numpy arrays.
+
+```python
+from antmocdata.solution import load_vtu
+# Read only the 'Avg Fission RX' dataset from file 'reaction_rates.vtu'
+rx = load_vtu("reaction_rates.vtu", ["^Avg Fission RX$"])
+fiss = rx["Avg Fission RX"]
+print(fiss.shape)
+```
+
+For ANT-MOC v0.1.15, the coordinate axes in a `.vtu` file are in the following order.
+
+Loading the file with `load_vtu` will revert the y-axis. Back to the previous example, loaded data can be accessed by `fiss[z, y, x]`.
+
+## Subpackage: ANT-MOC Log
+
+Package `antmocdata.log` provides tools for exploring ANT-MOC logs.
 
 ### Examples
 
@@ -138,9 +160,9 @@ options["savedb"].value = "antmoc-logdb/"
 logdb.save(options("savedb"))
 ```
 
-## ANT-MOC MGXS
+## Subpackage: ANT-MOC MGXS
 
-Package `antmocdata.mgxs` contains tools for checking, manipulating, and generating MGXS files for ANT-MOC.
+Package `antmocdata.mgxs` provides tools for checking, manipulating, and generating MGXS files for ANT-MOC.
 
 ### Examples
 
