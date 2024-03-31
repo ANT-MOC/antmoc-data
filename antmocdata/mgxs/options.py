@@ -29,16 +29,16 @@ class Options(BaseOptions):
     True
 
     Get option value of "h"
-    >>> print(options["h"])
+    >>> print(options("h"))
     False
 
     Add an option to the object
     >>> options.add(name="test")
 
-    >>> options["test"]= "hello world"
+    >>> options["test"].value = "hello world"
 
     Print the option of "test"
-    >>> print(options["test"])
+    >>> print(options("test"))
     hello world
 
     """

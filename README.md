@@ -7,20 +7,26 @@ A package for ANT-MOC data manipulation.
   - [Prerequisites](#prerequisites)
   - [Install](#install)
   - [License](#license)
-  - [ANT-MOC MGXS](#ant-moc-mgxs)
+  - [ANT-MOC Log](#ant-moc-log)
     - [Examples](#examples)
-    - [HDF5 Data Layout](#hdf5-data-layout)
+    - [Log file](#log-file)
+    - [Extractor](#extractor)
+    - [Fields](#fields)
+    - [Save log database](#save-log-database)
+  - [ANT-MOC MGXS](#ant-moc-mgxs)
+    - [Examples](#examples-1)
+    - [HDF5 data layout](#hdf5-data-layout)
       - [Layout: named](#layout-named)
       - [Layout: compact/compressed](#layout-compactcompressed)
-    - [Common Modules](#common-modules)
+    - [Common modules](#common-modules)
     - [Type A](#type-a)
       - [Modules](#modules)
-      - [File Formats](#file-formats)
+      - [File formats](#file-formats)
         - [`materials.xml`](#materialsxml)
         - [`infilecross`](#infilecross)
     - [Type B](#type-b)
       - [Modules](#modules-1)
-      - [File Formats](#file-formats-1)
+      - [File formats](#file-formats-1)
 
 ## Prerequisites
 
@@ -39,22 +45,115 @@ $ pip install antmocdata
 
 MIT
 
-## ANT-MOC MGXS
+## ANT-MOC Log
 
-Tools for checking, manipulating, and generating MGXS files for ANT-MOC.
+Package `antmocdata.log` contains tools for exploring ANT-MOC logs.
 
 ### Examples
 
-Check the directory `examples/mgxs` for examples on how to use `antmocmgxs`.
+Please check the directory `examples/log` for live examples.
 
 Each of the sample scripts accepts command line arguments.
 
 ```bash
-./examples/mgxs/h5/fix_materials.py --help
-./examples/mgxs/xml/fix_materials_in_xml.py --help
+python ./examples/log/extract-records.py --help
 ```
 
-### HDF5 Data Layout
+### Log file
+
+A log file of ANT-MOC contains many data fields. If a group of log files are provided to a `LogDB` object, these files will be serialized and stored as `LogFile` objects.
+
+```python
+from antmocdata.log import Options, LogDB
+options = Options()
+# ...
+# setup options eigher through CLI or direct assignments
+# ...
+logdb = LogDB()
+logdb.setup(options)
+```
+
+### Extractor
+
+A log extractor is used to make `LogDB` queries and save the results to a `.csv` file. For example, to get log files with specific fields, one could write down
+
+```python
+options["output"].value = "antmoc-records.csv"
+options["specs"].value = ["Azims", "Polars"]
+extractor = TinyExtractor(logdb)
+extractor.extract()
+```
+
+This would list the `Azims` and `Polars` fields of all the log files and save the results to `antmoc-records.csv`.
+
+In this case, `Azims` and `Polars` are called `FieldSpec`. A spec can be used to filter out results. For example,
+
+```python
+# List Azims and Polars fields of all the logs
+options["specs"].value = ["Azims", "Polars"]
+# List Azims and Polars fields of all the logs, and
+# only show logs with Azims=64 
+options["specs"].value = ["Azims=64", "Polars"]
+# List Azims and Polars fields of all the logs, and
+# only show logs with Azims=64 and Polars>2
+options["specs"].value = ["Azims=64", "Polars>2"]
+extractor.extract()
+```
+
+A `FieldSpec` consists of three parts: field name, binary operator, and value. Perl regex is supported for the field name and the operator. For example, `".*Time"` could match all the fields with an ending `Time` string.
+
+The binary operator could be `==`, `<`, `<=`, `>`, or `>=`. Operator `==` is for string comparison and perl regex is supported in this case. Inequality symbols are for string or numerical comparisons.
+
+> Be careful if you want to use inequality symbols on string fields. Values from these fields are compared through string comparison. Predefined field types are located in `antmocdata.log.default_fields.json`.
+
+### Fields
+
+Predefined log fields are located in `antmocdata.log.default_fields.json`. If these fields are outdated due to ANT-MOC updates, please update this json file or load a new one in your scripts.
+
+```python
+from antmocdata.log import fields
+fields.load("path/to/your/fields.json")
+```
+
+There is also an `add` method for appending single field to the field dictionary.
+
+```python
+from antmocdata.log import Field
+fields.add(Field(name="NewField1", patterns=["NewField1.*"]))
+
+# or adding the field directly to LogFields
+from antmocdata.log import LogFields
+LogFields().add(Field(name="NewField2", patterns=["NewField2.*"]))
+```
+
+### Save log database
+
+A `LogDB` object can be dumped as json files to a specific directory.
+
+```python
+options["savedb"].value = "antmoc-logdb/"
+# ...
+# setup the LogDB object
+# ...
+logdb.save(options("savedb"))
+```
+
+## ANT-MOC MGXS
+
+Package `antmocdata.mgxs` contains tools for checking, manipulating, and generating MGXS files for ANT-MOC.
+
+### Examples
+
+Please check the directory `examples/mgxs` for live examples.
+
+Each of the sample scripts accepts command line arguments.
+
+```bash
+python ./examples/mgxs/h5/fix-materials.py --help
+python ./examples/mgxs/xml/fix-materials-in-xml.py --help
+```
+
+### HDF5 data layout
 
 There are two layouts of material data in an H5 file. Materials are treated as data groups in both of the layouts.
 
@@ -110,7 +209,7 @@ For example, a scatter matrix with 2 energy groups has 4 elements, which are sto
 
 TODO
 
-### Common Modules
+### Common modules
 
 - `material`: class `Material` representing cross-sections. A material object could be written to an HDF5 file as a dataset.
 - `materialxml`: representation for the XML material definition, which is used to handle `materials.xml`.
@@ -119,7 +218,7 @@ TODO
 
 ### Type A
 
-Package `antmocmgxs.type_a` defines a generator which accepts two files to create an mgxs input for antmoc:
+Package `antmocdata.mgxs.type_a` defines a generator which accepts two files to create an mgxs input for antmoc:
 
 - `infilecross`: cross-sections in plain text.
 - `materials.xml`: material definitions in XML, including nuclear densities.
@@ -132,7 +231,7 @@ Package `antmocmgxs.type_a` defines a generator which accepts two files to creat
 - `generate`: functions for mgxs generation.
 - `options`: definition of `OptionsTypeA`, which is a sub-class of `Options`.
 
-#### File Formats
+#### File formats
 
 ##### `materials.xml`
 
@@ -179,4 +278,4 @@ TODO
 
 #### Modules
 
-#### File Formats
+#### File formats
