@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Tools for converting files of reaction rates and fluxes to other formats.
+Tools for VTK files of reaction rates and fluxes.
 
 Author: An Wang, USTB (wangan.cs@gmail.com)
 """
@@ -9,7 +9,7 @@ import re
 import xml.etree.ElementTree as ET
 import numpy as np
 
-def load_vtu(file, filters = []):
+def load_vtk(file, filters = []):
     """Converts a VTK formatted mesh into numpy arrays.
     This method takes the .vtu output of ANT-MOC as its argument and
     extracts data at all the z-sections. All the reaction rates are
@@ -32,9 +32,14 @@ def load_vtu(file, filters = []):
       ▼
       y,j
 
-    Arguments:
+    Parameters
+    ----------
         file: file path or file object of the VTK file
         filters: string array, regexes of reaction rate names
+
+    Returns
+    -------
+        A dictionary of numpy arrays
     """
 
     # Parses the XML file and returns root
@@ -51,7 +56,7 @@ def load_vtu(file, filters = []):
     ny = int(extent[1])
     nz = int(extent[2])
 
-    print('Mesh dimensions = [%d, %d, %d]' % (nx, ny, nz))
+    print(f'Mesh dimensions = [{nx}, {ny}, {nz}]')
     
     # Initializes a numpy array dictionary
     arrays = {}

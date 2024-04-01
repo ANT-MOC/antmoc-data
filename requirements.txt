@@ -2,6 +2,7 @@ baseopt
 h5py
 numpy
 flake8
+pyevtk
 pylint
 pytest
 pytest-cov

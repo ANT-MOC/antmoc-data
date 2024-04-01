@@ -13,8 +13,9 @@ description = "A package for ANT-MOC data manipulation."
 readme = {file = "README.md", content-type = "text/markdown"}
 dependencies = [
     "baseopt",
-    "numpy",
     "h5py",
+    "numpy",
+    "pyevtk",
 ]
 requires-python = ">= 3.8"
 

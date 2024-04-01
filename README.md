@@ -4,11 +4,11 @@ ANT-MOC Data
 A package for ANT-MOC data manipulation.
 
 - [ANT-MOC Data](#ant-moc-data)
-  - [Prerequisites](#prerequisites)
   - [Install](#install)
   - [License](#license)
   - [Subpackage: ANT-MOC Solution](#subpackage-ant-moc-solution)
-    - [Load data to numpy arrays](#load-data-to-numpy-arrays)
+    - [Load VTK data to numpy arrays](#load-vtk-data-to-numpy-arrays)
+    - [Convert HDF5 data to VTK data](#convert-hdf5-data-to-vtk-data)
   - [Subpackage: ANT-MOC Log](#subpackage-ant-moc-log)
     - [Examples](#examples)
     - [Log file](#log-file)
@@ -30,13 +30,6 @@ A package for ANT-MOC data manipulation.
       - [Modules](#modules-1)
       - [File formats](#file-formats-1)
 
-## Prerequisites
-
-- Python >= 3.8
-- baseopt
-- numpy
-- h5py
-
 ## Install
 
 ```bash
@@ -51,14 +44,14 @@ MIT
 
 Package `antmocdata.solution` provides tools for processing reaction rates and fluxes produced by ANT-MOC.
 
-### Load data to numpy arrays
+### Load VTK data to numpy arrays
 
-Function `antmocdata.solution.load_vtu` reads reaction rates and fluxes from a `.vtu` file and stores them in a dictionary of numpy arrays.
+Function `antmocdata.solution.load_vtk` reads reaction rates and fluxes from a `.vtu` file and stores them in a dictionary of numpy arrays.
 
 ```python
-from antmocdata.solution import load_vtu
+from antmocdata.solution import load_vtk
 # Read only the 'Avg Fission RX' dataset from file 'reaction_rates.vtu'
-rx = load_vtu("reaction_rates.vtu", ["^Avg Fission RX$"])
+rx = load_vtk("reaction_rates.vtu", ["^Avg Fission RX$"])
 fiss = rx["Avg Fission RX"]
 print(fiss.shape)
 ```
@@ -66,9 +59,18 @@ print(fiss.shape)
 For ANT-MOC v0.1.15, a reaction rate dataset in a `.vtu` file is a 1D array.
 If the dimensions of reaction rate distributions are `(Nx, Ny, Nz)`, a data point `(x,y,z)` is indexed by `x+y*Nx+z*Nx*Ny` in the dataset.
 
-Loading the file with `load_vtu` will revert the y-axis. Back to the previous example, loaded data can be accessed by `fiss[z, y, x]`.
+Loading the file with `load_vtk` will revert the y-axis. Back to the previous example, loaded data can be accessed by `fiss[z, y, x]`.
 
 <img src="https://github.com/ANT-MOC/antmoc-data/assets/22237751/74fe69d2-c758-4f53-81ca-939a37305417" height="300">
+
+### Convert HDF5 data to VTK data
+
+Function `antmocdata.solution.convert_h5_to_vtk` reads reaction rates and fluxes from a `.h5` file and writes the converted data to a `.vtu` file.
+
+```python
+from antmocdata.solution import convert_h5_to_vtk
+convert_h5_to_vtk(file="fsr_data.h5")
+```
 
 ## Subpackage: ANT-MOC Log
 
