@@ -1,7 +1,8 @@
 ANT-MOC Data
 ===========
 
-[![Python tests](https://github.com/ANT-MOC/antmoc-data/actions/workflows/python-tox.yml/badge.svg)](https://github.com/ANT-MOC/antmoc-data/actions/workflows/python-tox.yml) [![PyPI package](https://github.com/ANT-MOC/antmoc-data/actions/workflows/python-publish.yml/badge.svg)](https://github.com/ANT-MOC/antmoc-data/actions/workflows/python-publish.yml/badge.svg)
+[![Python tests](https://github.com/ANT-MOC/antmoc-data/actions/workflows/python-tox.yml/badge.svg)](https://github.com/ANT-MOC/antmoc-data/actions/workflows/python-tox.yml) [![PyPI - Version](https://img.shields.io/pypi/v/antmocdata?label=PyPI%20Package&color=blue&logo=python)](https://pypi.org/project/antmocdata/) [![ANT-MOC](https://img.shields.io/badge/ANT--MOC-v0.1.15-red?logo=cplusplus)](https://gitlab.com/HPCer/neutronics/ant-moc)
+
 
 A package for ANT-MOC data manipulation.
 
