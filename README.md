@@ -1,20 +1,22 @@
 ANT-MOC Data
 ===========
 
+[![Python tests](https://github.com/ANT-MOC/antmoc-data/actions/workflows/python-tox.yml/badge.svg)](https://github.com/ANT-MOC/antmoc-data/actions/workflows/python-tox.yml) [![PyPI package](https://github.com/ANT-MOC/antmoc-data/actions/workflows/python-publish.yml/badge.svg)](https://github.com/ANT-MOC/antmoc-data/actions/workflows/python-publish.yml/badge.svg)
+
 A package for ANT-MOC data manipulation.
 
 - [ANT-MOC Data](#ant-moc-data)
-  - [Install](#install)
+  - [Installing](#installing)
   - [License](#license)
   - [Subpackage: ANT-MOC Solution](#subpackage-ant-moc-solution)
-    - [Load VTK data to numpy arrays](#load-vtk-data-to-numpy-arrays)
-    - [Convert HDF5 data to VTK data](#convert-hdf5-data-to-vtk-data)
+    - [Loading VTK data](#loading-vtk-data)
+    - [Converting HDF5 data to VTK data](#converting-hdf5-data-to-vtk-data)
   - [Subpackage: ANT-MOC Log](#subpackage-ant-moc-log)
     - [Examples](#examples)
     - [Log file](#log-file)
     - [Extractor](#extractor)
     - [Fields](#fields)
-    - [Save log database](#save-log-database)
+    - [Saving log database](#saving-log-database)
   - [Subpackage: ANT-MOC MGXS](#subpackage-ant-moc-mgxs)
     - [Examples](#examples-1)
     - [HDF5 data layout](#hdf5-data-layout)
@@ -30,7 +32,7 @@ A package for ANT-MOC data manipulation.
       - [Modules](#modules-1)
       - [File formats](#file-formats-1)
 
-## Install
+## Installing
 
 ```bash
 $ pip install antmocdata
@@ -44,7 +46,7 @@ MIT
 
 Package `antmocdata.solution` provides tools for processing reaction rates and fluxes produced by ANT-MOC.
 
-### Load VTK data to numpy arrays
+### Loading VTK data
 
 Function `antmocdata.solution.load_vtk` reads reaction rates and fluxes from a `.vtu` file and stores them in a dictionary of numpy arrays.
 
@@ -63,7 +65,7 @@ Loading the file with `load_vtk` will revert the y-axis. Back to the previous ex
 
 <img src="https://github.com/ANT-MOC/antmoc-data/assets/22237751/74fe69d2-c758-4f53-81ca-939a37305417" height="300">
 
-### Convert HDF5 data to VTK data
+### Converting HDF5 data to VTK data
 
 Function `antmocdata.solution.convert_h5_to_vtk` reads reaction rates and fluxes from a `.h5` file and writes the converted data to a `.vtu` file.
 
@@ -161,7 +163,7 @@ from antmocdata.log import LogFields
 LogFields().add(Field(name="NewField2", patterns=["NewField2.*"]))
 ```
 
-### Save log database
+### Saving log database
 
 A `LogDB` object can be dumped as json files to a specific directory.
 
