@@ -1,7 +1,8 @@
 ANT-MOC Data
 ===========
 
-[![Python tests](https://github.com/ANT-MOC/antmoc-data/actions/workflows/python-tox.yml/badge.svg)](https://github.com/ANT-MOC/antmoc-data/actions/workflows/python-tox.yml) [![PyPI - Version](https://img.shields.io/pypi/v/antmocdata?label=PyPI%20Package&color=blue&logo=python)](https://pypi.org/project/antmocdata/) [![ANT-MOC](https://img.shields.io/badge/ANT--MOC-v0.1.15-red?logo=cplusplus)](https://gitlab.com/HPCer/neutronics/ant-moc)
+[![Python tests](https://github.com/ANT-MOC/antmoc-data/actions/workflows/python-tox.yml/badge.svg)](https://github.com/ANT-MOC/antmoc-data/actions/workflows/python-tox.yml) [![PyPI - Version](https://img.shields.io/pypi/v/antmocdata?label=PyPI%20Package&color=blue&logo=python)](https://pypi.org/project/antmocdata/) [![Conda Version](https://img.shields.io/conda/vn/conda-forge/antmocdata?logo=anaconda&color=green)](https://anaconda.org/conda-forge/antmocdata)
+ [![ANT-MOC](https://img.shields.io/badge/ANT--MOC-v0.1.15-red?logo=cplusplus)](https://gitlab.com/HPCer/neutronics/ant-moc) 
 
 
 A package for ANT-MOC data manipulation.
@@ -35,8 +36,16 @@ A package for ANT-MOC data manipulation.
 
 ## Installing
 
+With pip:
+
 ```bash
 $ pip install antmocdata
+```
+
+With conda:
+
+```bash
+$ conda install conda-forge::antmocdata
 ```
 
 ## License
